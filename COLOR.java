@@ -17,4 +17,30 @@ public enum COLOR {
         }
         return null;
     }
+
+    public static String getBackGroundColor(COLOR color){
+        if(color.equals(COLOR.RED)){
+            return "\u001b[48;5;101m";
+        }else if(color.equals(COLOR.BLUE)){
+            return "\u001b[48;5;104m";
+        }else if(color.equals(COLOR.YELLOW)){
+            return "\u001b[48;5;103m";
+        }else if(color.equals(COLOR.GREEN)){
+            return "\u001b[48;5;102m";
+        }
+        return null;
+    }
+
+    public static String getBackGroundColorByIndex(int indexColor){
+        if(color.equals(COLOR.RED)){
+            return "\u001b[48;5;101m";
+        }else if(color.equals(COLOR.BLUE)){
+            return "\u001b[48;5;104m";
+        }else if(color.equals(COLOR.YELLOW)){
+            return "\u001b[48;5;103m";
+        }else if(color.equals(COLOR.GREEN)){
+            return "\u001b[48;5;102m";
+        }
+        return null;
+    }
 }
