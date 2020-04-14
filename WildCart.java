@@ -2,8 +2,8 @@ package ir.ac.aut;
 
 public class WildCart extends Cart {
 
-    public WildCart(COLOR colorOfCart){
-        super(50, colorOfCart);
+    public WildCart(){
+        super(50, null);
     }
 
     @Override

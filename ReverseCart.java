@@ -2,8 +2,7 @@ package ir.ac.aut;
 
 public class ReverseCart extends Cart {
 
-    public ReverseCart(int number, COLOR colorOfCart){
-        //we are sure that the number given to thid method will be in range [0,9]
+    public ReverseCart(COLOR colorOfCart){
         super(20, colorOfCart);
     }
 

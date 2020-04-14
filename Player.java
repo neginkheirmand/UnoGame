@@ -7,6 +7,7 @@ import java.util.ArrayList;
 public class Player {
     private final String namePlayer;
     private int playersPoint;
+    //when adding a new cart YOU SHOULD CHECK IF HASNT ALREADY BEEN ADDED
     private ArrayList<Cart> playersCarts;
 
     public Player(String name, ArrayList<Cart> playersCarts){
@@ -47,9 +48,10 @@ public class Player {
         return canPlayNum;
     }
 
-    public int show(Cart lastPlayedCart){
+    public int show(Cart lastPlayedCart){//the else works perfectly
         //we have to make sure that this player has at least one cart in his/her hands
         int canPlayNum=numPlayableCarts(lastPlayedCart);
+        System.out.println();
         if(canPlayNum==0){
             //cannot play
             //give a new cart to this player
@@ -61,6 +63,7 @@ public class Player {
         }else{
             int numHandCarts=playersCarts.size();
             int numberOfRepetition=0;
+            int nullPrinted=0;
             while (numHandCarts>0){
                 //there will be printing 7 carts in each  segment of 10 rows
 
@@ -71,29 +74,57 @@ public class Player {
                             if((7-numHandCarts)%2==0){
                                 //symmetric
                                 if(j>=(7-numHandCarts)/2&& j<7-((7-numHandCarts)/2)){
-                                    printLineOfCart(i, playersCarts.get((j + numberOfRepetition * 7 )- (7-numHandCarts)/2));
+                                    playersCarts.get((j + numberOfRepetition * 7 )- (7-numHandCarts)/2).printLineOfCart(i);
                                 } else if(j<(7-numHandCarts)/2){
-                                    printLineOfCart(0, null);
+                                    playersCarts.get(0).printLineOfCart(-1);
+                                    nullPrinted++;
                                 }else{
                                     break;
                                 }
                             }else{
                                 //non-symmetric
                                 if(j>=1+(7-numHandCarts)/2 && j<7-((7-numHandCarts)/2 )){
-                                    printLineOfCart(i, playersCarts.get((j + numberOfRepetition * 7 )- ((7-numHandCarts)/2) -1));
+                                    playersCarts.get((j + numberOfRepetition * 7 )- ((7-numHandCarts)/2) -1).printLineOfCart(i);
                                 }
                                 else if(j<1+((7-numHandCarts)/2)){
-                                    printLineOfCart(0, null);
+                                    playersCarts.get(0).printLineOfCart(-1);
+                                    nullPrinted++;
                                 }else{
                                     break;
                                 }
 
                             }
                         } else {
-                            printLineOfCart(i, playersCarts.get(j + numberOfRepetition * 7));
+                            playersCarts.get(j + numberOfRepetition * 7).printLineOfCart(i);
                         }
                     }
                     System.out.println();
+                }
+                if(numHandCarts>=7){
+                    for(int k=0; k<7; k++) {
+                        if ((k + 1 + (numberOfRepetition * 7)) < 10) {
+                            System.out.printf("     " + (k + 1 + (numberOfRepetition * 7)) + "     ");
+                        }else{
+                            System.out.printf("    " + (k + 1 + (numberOfRepetition * 7)) + "     ");
+
+                        }
+                    }
+                    System.out.println();
+                }else{
+                    //was the last line
+                    //since nullPrinted was added 7 times (7 rows) per each adelanted cart, definitly is a mutiplier of 7
+                    for(int k=0;k<(nullPrinted/7); k++){
+                        System.out.printf("           ");
+                    }
+
+                    for(int k=0; k<numHandCarts; k++) {
+                        if ((k + 1 + (numberOfRepetition * 7)) < 10) {
+                            System.out.printf("     " + (k + 1 + (numberOfRepetition * 7)) + "     ");
+                        }else{
+                            System.out.printf("    " + (k + 1 + (numberOfRepetition * 7)) + "     ");
+
+                        }
+                    }
                 }
                 System.out.println();
                 numHandCarts-=7;
@@ -104,132 +135,6 @@ public class Player {
         return 1;
     }
 
-    private void printLineOfCart(int line, Cart cartToPrint){
-        if(cartToPrint==null){
-            System.out.printf("           ");
-            return;
-        }
-        //every cart will have 9 lines of high and 9 chars of width
-        if(line==0||line==6){
-            if(cartToPrint.getColor()==null) {
-                //its wild -kinded- cart
-                for(int i=0; i<10; i++) {
-                    String colorTemp = COLOR.getBackGroundColorByIndex(i%4);
-                    System.out.printf(colorTemp+"+");
-                }
-                System.out.printf("\033[0m"+" ");
-                return;
-            }else {
-                String colorOutput = COLOR.getBackGroundColor(cartToPrint.getColor());
-                System.out.printf(colorOutput+"++++++++++");
-                System.out.printf("\033[0m"+" ");
-                return;
-            }
-        }else if(line==1||line==5){
-            if(cartToPrint.getColor()==null){
-                //its wild cart
-                String tempColor= COLOR.getBackGroundColor(COLOR.BLUE);
-                System.out.printf(tempColor+"+"+"\033[0m"+"        "+tempColor+"+");
-                System.out.printf("\033[0m"+" ");
-                return;
-                //agar ke tamiz nabud bayad bargardi va beynesh ye reset bezarE
-            }else {
-                String tempColor= COLOR.getBackGroundColor(cartToPrint.getColor());
-                System.out.printf(tempColor+"+");
-                System.out.printf("\033[0m");
-                System.out.printf("        "+tempColor+"+");
-                System.out.printf("\033[0m"+" ");
-                return;
-            }
-        }else if( line==2){
-            if(cartToPrint instanceof Draw2Cart|| cartToPrint instanceof SkipCart||cartToPrint instanceof NumericCart){
-                String tempColor= COLOR.getBackGroundColor(cartToPrint.getColor());
-                System.out.printf(tempColor+"+");
-                System.out.printf("\033[0m"+"        "+tempColor+"+");
-                System.out.printf("\033[0m"+" ");
-                return;
-            }else if(cartToPrint instanceof ReverseCart){
-                String tempColor= COLOR.getBackGroundColor(cartToPrint.getColor());
-                System.out.printf(tempColor+ "+");
-                System.out.printf("\033[0m"+"  ");
-                System.out.printf(COLOR.getColor(cartToPrint.getColor())+"<-->  "+tempColor+"+"+"\033[0m");
-                return;
-            }else if(cartToPrint instanceof WildDrawCart){
-                String tempColor= COLOR.getBackGroundColor(COLOR.YELLOW);
-                System.out.printf(tempColor+"+");
-                System.out.printf("\033[0m");
-                System.out.printf("  ");
-                String wild=COLOR.getColor(COLOR.YELLOW)+"W"+COLOR.getColor(COLOR.GREEN)+"i"+COLOR.getColor(COLOR.BLUE)+"l"+COLOR.getColor(COLOR.RED)+"d";
-                System.out.printf(wild+"  "+tempColor+"+"+"\033[0m"+" ");
-                return;
-            }else if(cartToPrint instanceof WildCart ){
-                String tempColor= COLOR.getBackGroundColor(COLOR.YELLOW);
-                System.out.printf(tempColor+"+");
-                System.out.printf("\033[0m");
-                System.out.printf("        "+tempColor+"+");
-                System.out.printf("\033[0m"+" ");
-                return;
-            }
-        }else if(line==3){
-            if(cartToPrint instanceof WildCart){
-                String tempColor= COLOR.getBackGroundColor(COLOR.GREEN);
-                System.out.printf(tempColor+"+");
-                System.out.printf("\033[0m  ");
-                String wild=COLOR.getColor(COLOR.YELLOW)+"W"+COLOR.getColor(COLOR.GREEN)+"i"+COLOR.getColor(COLOR.BLUE)+"l"+COLOR.getColor(COLOR.RED)+"d";
-                System.out.printf(wild+"  "+tempColor+"+"+"\033[0m ");
-                return;
-            }else if(cartToPrint instanceof ReverseCart){
-                String temp= COLOR.getBackGroundColor(cartToPrint.getColor());
-                System.out.printf(temp+"+"+"\033[0m"+COLOR.getColor(cartToPrint.getColor())+" Reversi"+temp+"+"+"\033[0m ");
-                return;
-            }else if( cartToPrint instanceof WildDrawCart){
-                String draw=COLOR.getColor(COLOR.RED)+"D"+COLOR.getColor(COLOR.BLUE)+"r"+COLOR.getColor(COLOR.GREEN)+"a"+COLOR.getColor(COLOR.YELLOW)+"w";
-                String temp = COLOR.getBackGroundColor(COLOR.GREEN);
-                System.out.printf(temp+"+"+"\033[0m"+draw+"  "+temp+"+"+"\033[0m ");
-                return;
-
-            }else if(cartToPrint instanceof Draw2Cart ){
-                String temp = COLOR.getBackGroundColor(cartToPrint.getColor());
-                System.out.printf(temp+"+"+COLOR.getColor(cartToPrint.getColor())+"  Draw  "+temp+"+"+"\033[0m ");
-                return;
-            }else if(cartToPrint instanceof SkipCart){
-                String temp= COLOR.getBackGroundColor(cartToPrint.getColor());
-                System.out.printf(temp+"+"+COLOR.getColor(cartToPrint.getColor())+"  Skip  "+temp+"+"+"\033[0m ");
-                return;
-            }else if(cartToPrint instanceof  NumericCart){
-                String temp = COLOR.getBackGroundColor(cartToPrint.getColor());
-                System.out.printf(temp+"+"+COLOR.getColor(cartToPrint.getColor())+"    %d   "+temp+"+"+"\033[0m ", ((NumericCart) cartToPrint).getNumber());
-                return;
-            }
-
-        }else if(line==4){
-            if(cartToPrint instanceof ReverseCart){
-                String tempColor= COLOR.getBackGroundColor(cartToPrint.getColor());
-                System.out.printf(tempColor+ "+");
-                System.out.printf("\033[0m");
-                System.out.printf("  ");
-                System.out.printf(COLOR.getColor(cartToPrint.getColor())+"<-->  "+tempColor+"+"+"\033[0m ");
-                return;
-            }else if(cartToPrint instanceof WildDrawCart){
-                String temp= COLOR.getBackGroundColor(COLOR.YELLOW);
-                System.out.println(temp+"+"+COLOR.getColor(COLOR.YELLOW)+"   +4   "+temp+"+"+"\033[0m ");
-                return;
-            }else if(cartToPrint instanceof NumericCart|| cartToPrint instanceof SkipCart){
-                String temp= COLOR.getBackGroundColor(cartToPrint.getColor());
-                System.out.printf(temp+"+"+"\033[0m"+"        "+temp+"+"+ "\033[0m ");
-                return;
-            }else if(cartToPrint instanceof WildCart){
-                String temp= COLOR.getBackGroundColor(COLOR.YELLOW);
-                System.out.printf(temp+"+"+"\033[0m"+"        "+temp+"+"+ "\033[0m ");
-                return;
-            }else if(cartToPrint instanceof Draw2Cart){
-                String temp= COLOR.getBackGroundColor(cartToPrint.getColor());
-                System.out.printf(temp+"+"+COLOR.getColor(cartToPrint.getColor())+"   +2   "+temp+"+"+"\033[0m ");
-                return;
-            }
-        }
-        return;
-    }
 
     public int numberOfCarts(){
         return playersCarts.size();
