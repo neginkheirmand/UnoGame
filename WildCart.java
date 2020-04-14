@@ -3,7 +3,6 @@ package ir.ac.aut;
 public class WildCart extends Cart {
 
     public WildCart(COLOR colorOfCart){
-        //we are sure that the number given to thid method will be in range [0,9]
         super(50, colorOfCart);
     }
 
