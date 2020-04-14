@@ -30,10 +30,10 @@ public class Player {
         System.out.println("MOSHKEL TUYE FUNCTION RemoveCart az class Player, darE sai mikoni CartE ro remove koni ke tuye list cart haye in player nist");
     }
 
-    public Cart playCart(Cart lastCartPlayed){
-
-
-    }
+//    public Cart playCart(Cart lastCartPlayed){
+//
+//
+//    }
 
     private int Show(Cart lastPlayedCart){
         //we have to make sure that this player has at least one cart in his/her hands
@@ -49,11 +49,23 @@ public class Player {
         if(canPlayNum==0){
             //cannot play
             //give a new cart to this player
+
             //check if this new cart can be played
             //if can be played
         }
+        return 0;
     }
 
+    private void printLineOfCart(int line, Cart cartToPrint){
+        //every cart will have 9 lines of high and 9 chars of width
+        if(line==0||line==8){
+            String colorOutput= COLOR.getBackGroundColor(cartToPrint.getColor());
+            System.out.printf("+-----+ ");
+            return;
+        }
+
+
+    }
 
     public int numberOfCarts(){
         return playersCarts.size();
