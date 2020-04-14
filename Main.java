@@ -53,7 +53,7 @@ public class Main {
 
         Player first_player= new Player("FisrtPlayer", FisrtPlayersCarts );
         first_player.show(new NumericCart(0, COLOR.BLUE));
-
+        System.out.printf("the number of first player carts are:"+ first_player.numberOfCarts());
 
 //        Game Uno = new Game()
     }
