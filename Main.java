@@ -1,5 +1,7 @@
 package ir.ac.aut;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Main {
@@ -37,13 +39,20 @@ public class Main {
         NumericCart myNumericCart8= new NumericCart(7, COLOR.BLUE);
         NumericCart myNumericCart9= new NumericCart(8, COLOR.BLUE);
         NumericCart myNumericCart10= new NumericCart(9, COLOR.BLUE);
+        ArrayList <Cart> FisrtPlayersCarts= new ArrayList<>();
+        FisrtPlayersCarts.add(myNumericCart1);
+        FisrtPlayersCarts.add(myNumericCart2);
+        FisrtPlayersCarts.add(myNumericCart3);
+        FisrtPlayersCarts.add(myNumericCart4);
+        FisrtPlayersCarts.add(myNumericCart5);
+        FisrtPlayersCarts.add(myNumericCart6);
+        FisrtPlayersCarts.add(myNumericCart7);
+        FisrtPlayersCarts.add(myNumericCart8);
+        FisrtPlayersCarts.add(myNumericCart9);
+        FisrtPlayersCarts.add(myNumericCart10);
 
-        int numberOfCarts=7;
-        while(numberOfCarts>0) {
-            numberOfCarts-=7;
-            if()
-        }
-
+        Player first_player= new Player("FisrtPlayer", FisrtPlayersCarts );
+        first_player.show(new NumericCart(0, COLOR.BLUE));
 
 
 //        Game Uno = new Game()
