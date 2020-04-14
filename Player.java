@@ -62,14 +62,42 @@ public class Player {
             int numHandCarts=playersCarts.size();
             int numberOfRepetition=0;
             while (numHandCarts>0){
-                //ther will be printing 7 carts in each 10 segment of rows
+                //there will be printing 7 carts in each  segment of 10 rows
 
                 for(int i=0;i<7; i++){
-                    for(int j=0; j<7; j++){
-                        printLineOfCart(i, playersCarts.get(j+numberOfRepetition*7));
+                    for(int j=0; j<7; j++) {
+                        if(numHandCarts>0&&numHandCarts<7){
+                            //last segments
+                            if((7-numberOfRepetition)%2==0){
+                                //symmetric
+                                if(j==(7-numberOfRepetition)/2){
+                                    printLineOfCart(i, playersCarts.get((j + numberOfRepetition * 7 )- (7-numberOfRepetition)/2));
+
+                                }
+                                else if(j<(7-numberOfRepetition)/2){
+                                    printLineOfCart(0, null);
+                                }else{
+                                    break;
+                                }
+                            }else{
+                                //non-symmetric
+                                if(j==1+(7-numberOfRepetition)/2){
+                                    printLineOfCart(i, playersCarts.get((j + numberOfRepetition * 7 )- ((7-numberOfRepetition)/2) -1));
+                                }
+                                else if(j<1+((7-numberOfRepetition)/2)){
+                                    printLineOfCart(0, null);
+                                }else{
+                                    break;
+                                }
+
+                            }
+                        } else {
+                            printLineOfCart(i, playersCarts.get(j + numberOfRepetition * 7));
+                        }
                     }
                     System.out.println();
                 }
+                System.out.println();
                 numHandCarts-=7;
                 numberOfRepetition++;
             }
@@ -79,6 +107,10 @@ public class Player {
     }
 
     private void printLineOfCart(int line, Cart cartToPrint){
+        if(cartToPrint==null){
+            System.out.printf("           ");
+            return;
+        }
         //every cart will have 9 lines of high and 9 chars of width
         if(line==0||line==6){
             if(cartToPrint.getColor()==null) {
@@ -115,15 +147,13 @@ public class Player {
             if(cartToPrint instanceof Draw2Cart|| cartToPrint instanceof SkipCart||cartToPrint instanceof NumericCart){
                 String tempColor= COLOR.getBackGroundColor(cartToPrint.getColor());
                 System.out.printf(tempColor+"+");
-                System.out.printf("\033[0m");
-                System.out.printf("        "+tempColor+"+");
+                System.out.printf("\033[0m"+"        "+tempColor+"+");
                 System.out.printf("\033[0m"+" ");
                 return;
             }else if(cartToPrint instanceof ReverseCart){
                 String tempColor= COLOR.getBackGroundColor(cartToPrint.getColor());
                 System.out.printf(tempColor+ "+");
-                System.out.printf("\033[0m");
-                System.out.printf("  ");
+                System.out.printf("\033[0m"+"  ");
                 System.out.printf(COLOR.getColor(cartToPrint.getColor())+"<-->  "+tempColor+"+"+"\033[0m");
                 return;
             }else if(cartToPrint instanceof WildDrawCart){
@@ -132,7 +162,7 @@ public class Player {
                 System.out.printf("\033[0m");
                 System.out.printf("  ");
                 String wild=COLOR.getColor(COLOR.YELLOW)+"W"+COLOR.getColor(COLOR.GREEN)+"i"+COLOR.getColor(COLOR.BLUE)+"l"+COLOR.getColor(COLOR.RED)+"d";
-                System.out.printf(wild+"  "+tempColor+"+"+"\033[0m");
+                System.out.printf(wild+"  "+tempColor+"+"+"\033[0m"+" ");
                 return;
             }else if(cartToPrint instanceof WildCart ){
                 String tempColor= COLOR.getBackGroundColor(COLOR.YELLOW);
@@ -146,32 +176,31 @@ public class Player {
             if(cartToPrint instanceof WildCart){
                 String tempColor= COLOR.getBackGroundColor(COLOR.GREEN);
                 System.out.printf(tempColor+"+");
-                System.out.printf("\033[0m");
-                System.out.printf("  ");
+                System.out.printf("\033[0m  ");
                 String wild=COLOR.getColor(COLOR.YELLOW)+"W"+COLOR.getColor(COLOR.GREEN)+"i"+COLOR.getColor(COLOR.BLUE)+"l"+COLOR.getColor(COLOR.RED)+"d";
-                System.out.printf(wild+"  "+tempColor+"+"+"\033[0m");
+                System.out.printf(wild+"  "+tempColor+"+"+"\033[0m ");
                 return;
             }else if(cartToPrint instanceof ReverseCart){
                 String temp= COLOR.getBackGroundColor(cartToPrint.getColor());
-                System.out.printf(temp+"+"+"\033[0m"+COLOR.getColor(cartToPrint.getColor())+" Reversi"+temp+"+");
+                System.out.printf(temp+"+"+"\033[0m"+COLOR.getColor(cartToPrint.getColor())+" Reversi"+temp+"+"+"\033[0m ");
                 return;
             }else if( cartToPrint instanceof WildDrawCart){
                 String draw=COLOR.getColor(COLOR.RED)+"D"+COLOR.getColor(COLOR.BLUE)+"r"+COLOR.getColor(COLOR.GREEN)+"a"+COLOR.getColor(COLOR.YELLOW)+"w";
                 String temp = COLOR.getBackGroundColor(COLOR.GREEN);
-                System.out.printf(temp+"+"+"\033[0m"+draw+"  "+temp+"+"+"\033[0m");
+                System.out.printf(temp+"+"+"\033[0m"+draw+"  "+temp+"+"+"\033[0m ");
                 return;
 
             }else if(cartToPrint instanceof Draw2Cart ){
                 String temp = COLOR.getBackGroundColor(cartToPrint.getColor());
-                System.out.printf(temp+"+"+COLOR.getColor(cartToPrint.getColor())+"  Draw  "+temp+"+"+"\033[0m");
+                System.out.printf(temp+"+"+COLOR.getColor(cartToPrint.getColor())+"  Draw  "+temp+"+"+"\033[0m ");
                 return;
             }else if(cartToPrint instanceof SkipCart){
                 String temp= COLOR.getBackGroundColor(cartToPrint.getColor());
-                System.out.printf(temp+"+"+COLOR.getColor(cartToPrint.getColor())+"  Skip  "+temp+"+"+"\033[0m");
+                System.out.printf(temp+"+"+COLOR.getColor(cartToPrint.getColor())+"  Skip  "+temp+"+"+"\033[0m ");
                 return;
             }else if(cartToPrint instanceof  NumericCart){
                 String temp = COLOR.getBackGroundColor(cartToPrint.getColor());
-                System.out.printf(temp+"+"+COLOR.getColor(cartToPrint.getColor())+"    %d   "+temp+"+"+"\033[0m", ((NumericCart) cartToPrint).getNumber());
+                System.out.printf(temp+"+"+COLOR.getColor(cartToPrint.getColor())+"    %d   "+temp+"+"+"\033[0m ", ((NumericCart) cartToPrint).getNumber());
                 return;
             }
 
@@ -181,23 +210,23 @@ public class Player {
                 System.out.printf(tempColor+ "+");
                 System.out.printf("\033[0m");
                 System.out.printf("  ");
-                System.out.printf(COLOR.getColor(cartToPrint.getColor())+"<-->  "+tempColor+"+"+"\033[0m");
+                System.out.printf(COLOR.getColor(cartToPrint.getColor())+"<-->  "+tempColor+"+"+"\033[0m ");
                 return;
             }else if(cartToPrint instanceof WildDrawCart){
                 String temp= COLOR.getBackGroundColor(COLOR.YELLOW);
-                System.out.println(temp+"+"+COLOR.getColor(COLOR.YELLOW)+"   +4   "+temp+"+"+"\033[0m");
+                System.out.println(temp+"+"+COLOR.getColor(COLOR.YELLOW)+"   +4   "+temp+"+"+"\033[0m ");
                 return;
             }else if(cartToPrint instanceof NumericCart|| cartToPrint instanceof SkipCart){
                 String temp= COLOR.getBackGroundColor(cartToPrint.getColor());
-                System.out.printf(temp+"+"+"\033[0m"+"        "+temp+"+"+ "\033[0m");
+                System.out.printf(temp+"+"+"\033[0m"+"        "+temp+"+"+ "\033[0m ");
                 return;
             }else if(cartToPrint instanceof WildCart){
                 String temp= COLOR.getBackGroundColor(COLOR.YELLOW);
-                System.out.printf(temp+"+"+"\033[0m"+"        "+temp+"+"+ "\033[0m");
+                System.out.printf(temp+"+"+"\033[0m"+"        "+temp+"+"+ "\033[0m ");
                 return;
             }else if(cartToPrint instanceof Draw2Cart){
                 String temp= COLOR.getBackGroundColor(cartToPrint.getColor());
-                System.out.printf(temp+"+"+COLOR.getColor(cartToPrint.getColor())+"   +2   "+temp+"+"+"\033[0m");
+                System.out.printf(temp+"+"+COLOR.getColor(cartToPrint.getColor())+"   +2   "+temp+"+"+"\033[0m ");
                 return;
             }
         }
