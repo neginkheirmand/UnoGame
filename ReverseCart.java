@@ -1,12 +1,10 @@
 package ir.ac.aut;
 
 public class ReverseCart extends Cart {
-    Game unoGame;
 
-    public ReverseCart(int number, COLOR colorOfCart, Game unoGame){
+    public ReverseCart(int number, COLOR colorOfCart){
         //we are sure that the number given to thid method will be in range [0,9]
         super(20, colorOfCart);
-        this.unoGame=unoGame;
     }
 
     @Override
@@ -16,15 +14,6 @@ public class ReverseCart extends Cart {
         }else{
             return false;
         }
-    }
-
-    @Override
-    public void action(Player player){
-        //before calling this method we make sure that this cart can be played
-        unoGame.reverseRotation();
-        player.addPoint(point);
-        player.removeCart(this);
-        return;
     }
 
 }
