@@ -68,23 +68,21 @@ public class Player {
                     for(int j=0; j<7; j++) {
                         if(numHandCarts>0&&numHandCarts<7){
                             //last segments
-                            if((7-numberOfRepetition)%2==0){
+                            if((7-numHandCarts)%2==0){
                                 //symmetric
-                                if(j==(7-numberOfRepetition)/2){
-                                    printLineOfCart(i, playersCarts.get((j + numberOfRepetition * 7 )- (7-numberOfRepetition)/2));
-
-                                }
-                                else if(j<(7-numberOfRepetition)/2){
+                                if(j>=(7-numHandCarts)/2&& j<7-((7-numHandCarts)/2)){
+                                    printLineOfCart(i, playersCarts.get((j + numberOfRepetition * 7 )- (7-numHandCarts)/2));
+                                } else if(j<(7-numHandCarts)/2){
                                     printLineOfCart(0, null);
                                 }else{
                                     break;
                                 }
                             }else{
                                 //non-symmetric
-                                if(j==1+(7-numberOfRepetition)/2){
-                                    printLineOfCart(i, playersCarts.get((j + numberOfRepetition * 7 )- ((7-numberOfRepetition)/2) -1));
+                                if(j>=1+(7-numHandCarts)/2 && j<7-((7-numHandCarts)/2 )){
+                                    printLineOfCart(i, playersCarts.get((j + numberOfRepetition * 7 )- ((7-numHandCarts)/2) -1));
                                 }
-                                else if(j<1+((7-numberOfRepetition)/2)){
+                                else if(j<1+((7-numHandCarts)/2)){
                                     printLineOfCart(0, null);
                                 }else{
                                     break;
