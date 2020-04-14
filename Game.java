@@ -10,6 +10,9 @@ public class Game {
     private ArrayList<Player> players;
 
     private boolean clockWise;
+//        System.out.println("\u21BA");   (counter clock wise)
+//        System.out.println("\u21BB");    (clock wise)
+
 
     public Game(int numPlayers){
 
