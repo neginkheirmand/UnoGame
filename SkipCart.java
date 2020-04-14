@@ -16,13 +16,4 @@ public class SkipCart extends Cart {
         }
     }
 
-    @Override
-    public void action(Player player){
-        //before calling this method we make sure that this cart can be played
-        player.addPoint(point);
-        player.removeCart(this);
-        return;
-    }
-
-
 }
