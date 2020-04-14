@@ -32,13 +32,13 @@ public enum COLOR {
     }
 
     public static String getBackGroundColorByIndex(int indexColor){
-        if(color.equals(COLOR.RED)){
+        if(indexColor==COLOR.RED.ordinal()){
             return "\u001b[48;5;101m";
-        }else if(color.equals(COLOR.BLUE)){
+        }else if(indexColor==COLOR.BLUE.ordinal()){
             return "\u001b[48;5;104m";
-        }else if(color.equals(COLOR.YELLOW)){
+        }else if(indexColor==COLOR.YELLOW.ordinal()){
             return "\u001b[48;5;103m";
-        }else if(color.equals(COLOR.GREEN)){
+        }else if(indexColor==COLOR.GREEN.ordinal()){
             return "\u001b[48;5;102m";
         }
         return null;
