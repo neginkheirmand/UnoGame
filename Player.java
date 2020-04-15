@@ -22,6 +22,11 @@ public class Player {
         return;
     }
 
+    public void addCart(Cart newCart){
+        playersCarts.add(newCart);
+        return;
+    }
+
     public void removeCart(Cart beRemovedCart){
         for(int i=0; i<playersCarts.size(); i++){
             if(beRemovedCart.equals(playersCarts.get(i))){
@@ -32,6 +37,10 @@ public class Player {
         }
         //BADAN IN RO PAK KON, FAGHAT BARAYE MOTMAEN SHODN
         System.out.println("MOSHKEL TUYE FUNCTION RemoveCart az class Player, darE sai mikoni CartE ro remove koni ke tuye list cart haye in player nist");
+    }
+
+    public int getNumberCartsLeft(){
+        return playersCarts.size();
     }
 
     public int getPlayersPoint(){

@@ -1,7 +1,7 @@
 package ir.ac.aut;
 
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.Random;
 import java.util.Collections;
 
 public class Game {
@@ -76,7 +76,18 @@ public class Game {
             }
             players.add(new Player("Player number "+(i+1), firstCartPlayer));
         }
+        //the last cart in the list should be of type other than Wild cart
 
+        if(carts.get(carts.size()-1) instanceof WildDrawCart || carts.get(carts.size()-1) instanceof WildCart){
+            int index=carts.size()-2;
+            while (carts.get(index) instanceof WildDrawCart || carts.get(index) instanceof WildCart){
+                index--;
+            }
+            Collections.swap(carts, carts.size()-1, index);
+        }
+        //now we are sure that the last cart in the array list is definitely a colorful cart
+
+        clockWise = true;
         run();
 
     }
@@ -100,6 +111,18 @@ public class Game {
 
             return null;
         }
+    }
+
+    private void playDar2CartForPlayer(int indexPlayer){
+        for(int i=0; i<2; i++) {
+            players.get(indexPlayer).addCart(carts.get(0));
+            carts.remove(0);
+        }
+        return;
+    }
+
+    private void playNumericCartForPlayer(int indexPlayer){
+
     }
 
     private void printBoard(){
@@ -136,12 +159,12 @@ public class Game {
             for(int i=0; i<players.get(0).getNamePlayer().length()+1; i++){
                 System.out.printf(" ");
             }
-            System.out.println(players.get(2).getNamePlayer());
+            System.out.println(players.get(1).getNamePlayer());
             for(int i=0; i<players.get(0).getNamePlayer().length(); i++){
                 System.out.printf(" ");
             }
             System.out.println("//   "+rotationUniCode+"  \\\\");
-            System.out.printf(players.get(0).getNamePlayer()+"----------"+players.get(1).getNamePlayer());
+            System.out.printf(players.get(0).getNamePlayer()+"----------"+players.get(2).getNamePlayer());
         }else if(players.size()>=4){
             for(int i=0; i<players.get(0).getNamePlayer().length(); i++){
                 System.out.printf(" ");
@@ -192,6 +215,7 @@ public class Game {
         }
     }
 
+    //badan bayad in method ro update koni be tori ke be tartib neshun bede emtiad haro
     private void printPlayersInfo(){
         int maxName = 8;
         for(int i=0; i<players.size(); i++){
@@ -228,9 +252,85 @@ public class Game {
         return;
     }
 
+
+
     private void run(){
+        int indexPlayerInTurn = (new Random()).nextInt(players.size());
+        System.out.println("the game begins with the player number "+(indexPlayerInTurn+1)+" name of player:"+players.get(indexPlayerInTurn).getNamePlayer());
+        Cart lastCart=getLastCart();
+        //first we print the cart in the center
+        printRoundInfo();
+        lastCart.PrintCart();
+        //first round:
+        if(lastCart instanceof Draw2Cart){
+            playDar2CartForPlayer(indexPlayerInTurn);
+        }else if(lastCart instanceof ReverseCart){
+            indexPlayerInTurn++;
+            if(indexPlayerInTurn==players.size()) {
+                indexPlayerInTurn = indexPlayerInTurn % players.size();
+            }
+            reverseRotation();
+        }else if(lastCart instanceof SkipCart){
+            indexPlayerInTurn--;
+            if(indexPlayerInTurn<0){
+                indexPlayerInTurn+=players.size();
+            }
+        }
         while (true){
-            
+            lastCart=getLastCart();
+            Cart newCart = players.get(indexPlayerInTurn).playCart(lastCart);
+            boolean cartPlayed = false;
+            if(newCart == null){
+                players.get(indexPlayerInTurn).addCart(carts.get(0));
+                carts.remove(0);
+                newCart = players.get(indexPlayerInTurn).playCart(lastCart);
+                if(newCart == null){
+                    System.out.printf("No carts available for this player to play, "+players.get(indexPlayerInTurn).getNamePlayer()+"loses turn");
+                }else{
+                    carts.add(newCart);
+                    cartPlayed = true;
+                }
+            }else{
+                carts.add(newCart);
+                cartPlayed = true;
+                //check if the game is over
+                if(players.get(indexPlayerInTurn).getNumberCartsLeft()==0){
+
+                    System.exit(0);
+                }
+
+            }
+            if(cartPlayed == true){
+                if(newCart instanceof  Draw2Cart){
+                    playDar2CartForPlayer(indexPlayerInTurn);
+                }else if(newCart instanceof ReverseCart){
+                    indexPlayerInTurn++;
+                    if(indexPlayerInTurn==players.size()) {
+                        indexPlayerInTurn = indexPlayerInTurn % players.size();
+                    }
+                    reverseRotation();
+                }else if(newCart instanceof SkipCart){
+                    indexPlayerInTurn--;
+                    if(indexPlayerInTurn<0){
+                        indexPlayerInTurn+=players.size();
+                    }
+                }
+            }
+
+            //now we move to the next Player
+            if( clockWise ){
+                indexPlayerInTurn++;
+                if(indexPlayerInTurn==players.size()) {
+                    indexPlayerInTurn = indexPlayerInTurn % players.size();
+                }
+            }else{
+                indexPlayerInTurn--;
+                if(indexPlayerInTurn<0){
+                    indexPlayerInTurn+=players.size();
+                }
+            }
+
+
         }
     }
 
