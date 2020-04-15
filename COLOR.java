@@ -18,6 +18,18 @@ public enum COLOR {
         return null;
     }
 
+    public static COLOR getColorByIndex(int indexColor){
+        if(indexColor==COLOR.RED.ordinal()){
+            return RED;
+        }else if(indexColor==COLOR.BLUE.ordinal()){
+            return BLUE;
+        }else if(indexColor==COLOR.YELLOW.ordinal()){
+            return YELLOW;
+        }else if(indexColor==COLOR.GREEN.ordinal()){
+            return GREEN;
+        }
+        return null;
+    }
     public static String getBackGroundColor(COLOR color){
         if(color.equals(COLOR.RED)){
             return "\u001b[48;5;101m";
