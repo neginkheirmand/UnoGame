@@ -34,6 +34,14 @@ public class Player {
         System.out.println("MOSHKEL TUYE FUNCTION RemoveCart az class Player, darE sai mikoni CartE ro remove koni ke tuye list cart haye in player nist");
     }
 
+    public int getPlayersPoint(){
+        playersPoint=0;
+        for(int i=0; i<playersCarts.size(); i++){
+            playersPoint+=playersCarts.get(i).getPoint();
+        }
+        return playersPoint;
+    }
+
     public Cart playCart(Cart lastCartPlayed){
         int chosenCart=chose(lastCartPlayed);
         if(chosenCart==-1){
@@ -168,5 +176,9 @@ public class Player {
 
     public int numberOfCarts(){
         return playersCarts.size();
+    }
+
+    public String getNamePlayer(){
+        return namePlayer;
     }
 }

@@ -102,12 +102,136 @@ public class Game {
         }
     }
 
+    private void printBoard(){
+        String rotationUniCode;
+        if(clockWise==true){
+            System.out.println("kind of rotation is Clock-wise");
+            rotationUniCode ="\u21BB";
+        }else{
+            System.out.println("kind of rotation is Counter Clock-wise");
+            rotationUniCode = "\u21BB";
+        }
+
+        if(players.size()==2){
+            for(int i=0; i<players.get(0).getNamePlayer().length(); i++){
+                System.out.printf(" ");
+            }
+            System.out.println("   ----");
+            for(int i=0; i<players.get(0).getNamePlayer().length(); i++){
+                System.out.printf(" ");
+            }
+            System.out.println("//      \\\\");
+            System.out.printf(players.get(0).getNamePlayer()+"    "+rotationUniCode+"    "+players.get(1).getNamePlayer());
+            for(int i=0; i<players.get(0).getNamePlayer().length(); i++){
+                System.out.printf(" ");
+            }
+            System.out.println("\\\\      //");
+
+            for(int i=0; i<players.get(0).getNamePlayer().length(); i++){
+                System.out.printf(" ");
+            }
+            System.out.println("   ----");
+        }else if(players.size()==3){
+
+            for(int i=0; i<players.get(0).getNamePlayer().length()+1; i++){
+                System.out.printf(" ");
+            }
+            System.out.println(players.get(2).getNamePlayer());
+            for(int i=0; i<players.get(0).getNamePlayer().length(); i++){
+                System.out.printf(" ");
+            }
+            System.out.println("//   "+rotationUniCode+"  \\\\");
+            System.out.printf(players.get(0).getNamePlayer()+"----------"+players.get(1).getNamePlayer());
+        }else if(players.size()>=4){
+            for(int i=0; i<players.get(0).getNamePlayer().length(); i++){
+                System.out.printf(" ");
+            }
+            System.out.println("  "+players.get(1).getNamePlayer());
+            for(int i=0; i<players.get(0).getNamePlayer().length(); i++){
+                System.out.printf(" ");
+            }
+            System.out.printf("//");
+            for(int i=0; i<(players.get(1).getNamePlayer().length()+players.get(3).getNamePlayer().length())/2; i++){
+                if(i==(players.get(1).getNamePlayer().length()+players.get(3).getNamePlayer().length())/4){
+                    System.out.printf(rotationUniCode);
+                }else {
+                    System.out.printf(" ");
+                }
+            }
+            System.out.println("\\\\");
+            System.out.printf(players.get(0).getNamePlayer());
+            int max;
+            if(players.get(1).getNamePlayer().length()<players.get(3).getNamePlayer().length()){
+                max = players.get(3).getNamePlayer().length();
+            }else{
+                max = players.get(1).getNamePlayer().length();
+            }
+            for(int i=0; i<max; i++){
+                System.out.printf(" ");
+            }
+            System.out.println(players.get(2).getNamePlayer());
+            for(int i=0; i<players.get(0).getNamePlayer().length(); i++){
+                System.out.printf(" ");
+            }
+            if(players.size()==4) {
+                System.out.printf("\\\\");
+            }else{
+                System.out.printf("...");
+
+            }
+            for(int i=0; i<(players.get(1).getNamePlayer().length()+players.get(3).getNamePlayer().length())/2; i++){
+                System.out.printf(" ");
+            }
+            System.out.println("//");
+
+            for(int i=0; i<players.get(0).getNamePlayer().length(); i++){
+                System.out.printf(" ");
+            }
+            System.out.println("  "+players.get(3).getNamePlayer());
+
+        }
+    }
+
+    private void printPlayersInfo(){
+        int maxName = 8;
+        for(int i=0; i<players.size(); i++){
+            if(maxName<players.get(i).getNamePlayer().length()){
+                maxName = players.get(i).getNamePlayer().length();
+            }
+        }
+
+        System.out.println();
+        System.out.printf(COLOR.getColor(COLOR.BLUE)+"Names:");
+        for(int i=0; i<maxName-6; i++){
+            System.out.printf(" ");
+        }
+        System.out.printf(COLOR.getColor(COLOR.RED)+"|"+COLOR.getColor(COLOR.BLUE)+"  points:  "+COLOR.getColor(COLOR.RED)+"|");
+        for(int i=0; i<maxName+10; i++){
+            System.out.printf("-");
+        }
+        System.out.println(COLOR.getColor(COLOR.BLUE));
+        for(int i=0; i<players.size(); i++){
+            System.out.printf(players.get(i).getNamePlayer());
+            for(int j=0; j<maxName-players.get(i).getNamePlayer().length(); j++){
+                System.out.printf(" ");
+            }
+            System.out.println(COLOR.getColor(COLOR.RED)+"|"+COLOR.getColor(COLOR.BLUE)+players.get(i).getPlayersPoint());
+        }
+        for(int i=0; i<maxName+10; i++){
+            System.out.printf("-");
+        }
+        return;
+    }
     private void printRoundInfo(){
-        
+        printBoard();
+        printPlayersInfo();
+        return;
     }
 
     private void run(){
-
+        while (true){
+            
+        }
     }
 
 }

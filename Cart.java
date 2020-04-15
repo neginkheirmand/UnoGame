@@ -31,6 +31,10 @@ public class Cart implements Action{
         return false;
     }
 
+    public int getPoint(){
+        return point;
+    }
+
 //this method works perfectly
     public void printLineOfCart(int line){
         if(line==-1){
