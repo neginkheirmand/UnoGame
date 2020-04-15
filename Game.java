@@ -113,16 +113,190 @@ public class Game {
         }
     }
 
-    private void playDar2CartForPlayer(int indexPlayer){
-        for(int i=0; i<2; i++) {
-            players.get(indexPlayer).addCart(carts.get(0));
-            carts.remove(0);
+    private int miniRunDraw2(int indexPlayer){
+        //if the last cart played before this player (indexPlayer) was a draw +2 cart the game continues its course in this method
+        //this method returns the number of round advanced
+
+        int roundsAdvanced = 1;
+        while (true) {
+            Cart lastPlayedCart = getLastCart();
+            Cart newCart = players.get(indexPlayer).playCart(lastPlayedCart);
+
+
+            if (newCart == null) {
+                players.get(indexPlayer).addCart(carts.get(0));
+                carts.remove(0);
+                newCart = players.get(indexPlayer).playCart(lastPlayedCart);
+                if (newCart == null) {
+                    System.out.printf("No carts available for this player to play with, " + players.get(indexPlayer).getNamePlayer() + "loses turn (draw +2 carts)\n carts in your hand:");
+                    for (int i = 0; i < 2 * roundsAdvanced; i++) {
+                        players.get(indexPlayer).addCart(carts.get(0));
+                        carts.remove(0);
+                    }
+                    players.get(indexPlayer).printCarts(lastPlayedCart);
+                    return roundsAdvanced;
+                } else if (newCart instanceof Draw2Cart) {
+                    roundsAdvanced++;
+                    System.out.println(" next player should get +" + 2 * roundsAdvanced + "carts");
+                    carts.add(newCart);
+                } else {
+                    carts.add(newCart);
+                    System.out.println(" Draw " + (2 * roundsAdvanced) + " carts");
+                    for (int i = 0; i < 2 * roundsAdvanced; i++) {
+                        players.get(indexPlayer).addCart(carts.get(0));
+                        carts.remove(0);
+                    }
+                    players.get(indexPlayer).printCarts(lastPlayedCart);
+                    return roundsAdvanced;
+                }
+            } else {
+                //player has carts available to play with
+                if (newCart instanceof Draw2Cart) {
+                    roundsAdvanced++;
+                    carts.add(newCart);
+                    System.out.println("since the player, played a draw+2 cart, the draw consequence is for the next player");
+                } else {
+                    System.out.println("the player draw " + 2 * roundsAdvanced + "carts");
+                    for (int i = 0; i < 2 * roundsAdvanced; i++) {
+                        players.get(indexPlayer).addCart(carts.get(0));
+                        carts.remove(0);
+                    }
+                    carts.add(newCart);
+                    return roundsAdvanced;
+                }
+                //if the cursor is here then it means that the player has played a draw cart
+                //check if the game is over or if this player still has carts left in his hands
+                if (players.get(indexPlayer).getNumberCartsLeft() == 0) {
+                    //Game over
+                    if (clockWise) {
+                        for (int i = 0; i < 2 * roundsAdvanced; i++) {
+                            players.get((indexPlayer + 1) % players.size()).addCart(carts.get(0));
+                            carts.remove(0);
+                        }
+                    } else {
+                        if (indexPlayer - 1 >= 0) {
+                            for (int i = 0; i < 2 * roundsAdvanced; i++) {
+                                players.get(indexPlayer - 1).addCart(carts.get(0));
+                                carts.remove(0);
+                            }
+                        } else {
+                            for (int i = 0; i < 2 * roundsAdvanced; i++) {
+                                players.get(players.size() - 1).addCart(carts.get(0));
+                                carts.remove(0);
+                            }
+                        }
+                    }
+                    printEndGame();
+                    System.exit(0);
+                }
+
+            }
+
+            //age reCde inja yani in player(ham) cart Draw+2 estefade karde va bayad did 2*roundAdvanced cart ro bayad be ki dad
+            //ta inja karhayi ke bayad baraye un player mikard hal shod ama hichkarE baraye player baD nakarDm
+            //agar player baD masaln
+            .
+            if (newCart instanceof Draw2Cart) {
+                playDar2CartForPlayer(indexPlayerInTurn);
+            } else if (newCart instanceof ReverseCart) {
+                indexPlayerInTurn++;
+                if (indexPlayerInTurn == players.size()) {
+                    indexPlayerInTurn = indexPlayerInTurn % players.size();
+                }
+                reverseRotation();
+            } else if (newCart instanceof SkipCart) {
+                indexPlayerInTurn--;
+                if (indexPlayerInTurn < 0) {
+                    indexPlayerInTurn += players.size();
+                }
+            }
+
+
         }
-        return;
     }
 
-    private void playNumericCartForPlayer(int indexPlayer){
+    private void run(){
+        int indexPlayerInTurn = (new Random()).nextInt(players.size());
+        System.out.println("the game begins with the player number "+(indexPlayerInTurn+1)+" name of player:"+players.get(indexPlayerInTurn).getNamePlayer());
+        Cart lastCart=getLastCart();
+        //first we print the cart in the center
+        printRoundInfo();
+        lastCart.PrintCart();
+        //first round:
+        if(lastCart instanceof Draw2Cart){
+            miniRunDraw2(indexPlayerInTurn);
+        }else if(lastCart instanceof ReverseCart){
+            indexPlayerInTurn++;
+            if(indexPlayerInTurn==players.size()) {
+                indexPlayerInTurn = indexPlayerInTurn % players.size();
+            }
+            reverseRotation();
+        }else if(lastCart instanceof SkipCart){
+            indexPlayerInTurn--;
+            if(indexPlayerInTurn<0){
+                indexPlayerInTurn+=players.size();
+            }
+        }
+        while (true){
+            lastCart=getLastCart();
+            Cart newCart = players.get(indexPlayerInTurn).playCart(lastCart);
+            boolean cartPlayed = false;
+            if(newCart == null){
+                players.get(indexPlayerInTurn).addCart(carts.get(0));
+                carts.remove(0);
+                newCart = players.get(indexPlayerInTurn).playCart(lastCart);
+                if(newCart == null){
+                    System.out.printf("No carts available for this player to play, "+players.get(indexPlayerInTurn).getNamePlayer()+"loses turn");
+                }else{
+                    carts.add(newCart);
+                    cartPlayed = true;
+                }
+            }else{
+                carts.add(newCart);
+                cartPlayed = true;
+                //check if the game is over
+                if(players.get(indexPlayerInTurn).getNumberCartsLeft()==0){
+                    printEndGame();
+                    System.exit(0);
+                }
 
+            }
+            if(cartPlayed == true){
+                if(newCart instanceof  Draw2Cart){
+                    playDar2CartForPlayer(indexPlayerInTurn);
+                }else if(newCart instanceof ReverseCart){
+                    indexPlayerInTurn++;
+                    if(indexPlayerInTurn==players.size()) {
+                        indexPlayerInTurn = indexPlayerInTurn % players.size();
+                    }
+                    reverseRotation();
+                }else if(newCart instanceof SkipCart){
+                    indexPlayerInTurn--;
+                    if(indexPlayerInTurn<0){
+                        indexPlayerInTurn+=players.size();
+                    }
+                }
+            }
+
+            //now we move to the next Player
+            if( clockWise ){
+                indexPlayerInTurn++;
+                if(indexPlayerInTurn==players.size()) {
+                    indexPlayerInTurn = indexPlayerInTurn % players.size();
+                }
+            }else{
+                indexPlayerInTurn--;
+                if(indexPlayerInTurn<0){
+                    indexPlayerInTurn+=players.size();
+                }
+            }
+
+
+        }
+    }
+
+    private void printEndGame(){
+        System.out.println("the game is over but stil this part of the programm is not completed");
     }
 
     private void printBoard(){
@@ -246,92 +420,12 @@ public class Game {
         }
         return;
     }
+
     private void printRoundInfo(){
         printBoard();
         printPlayersInfo();
         return;
     }
 
-
-
-    private void run(){
-        int indexPlayerInTurn = (new Random()).nextInt(players.size());
-        System.out.println("the game begins with the player number "+(indexPlayerInTurn+1)+" name of player:"+players.get(indexPlayerInTurn).getNamePlayer());
-        Cart lastCart=getLastCart();
-        //first we print the cart in the center
-        printRoundInfo();
-        lastCart.PrintCart();
-        //first round:
-        if(lastCart instanceof Draw2Cart){
-            playDar2CartForPlayer(indexPlayerInTurn);
-        }else if(lastCart instanceof ReverseCart){
-            indexPlayerInTurn++;
-            if(indexPlayerInTurn==players.size()) {
-                indexPlayerInTurn = indexPlayerInTurn % players.size();
-            }
-            reverseRotation();
-        }else if(lastCart instanceof SkipCart){
-            indexPlayerInTurn--;
-            if(indexPlayerInTurn<0){
-                indexPlayerInTurn+=players.size();
-            }
-        }
-        while (true){
-            lastCart=getLastCart();
-            Cart newCart = players.get(indexPlayerInTurn).playCart(lastCart);
-            boolean cartPlayed = false;
-            if(newCart == null){
-                players.get(indexPlayerInTurn).addCart(carts.get(0));
-                carts.remove(0);
-                newCart = players.get(indexPlayerInTurn).playCart(lastCart);
-                if(newCart == null){
-                    System.out.printf("No carts available for this player to play, "+players.get(indexPlayerInTurn).getNamePlayer()+"loses turn");
-                }else{
-                    carts.add(newCart);
-                    cartPlayed = true;
-                }
-            }else{
-                carts.add(newCart);
-                cartPlayed = true;
-                //check if the game is over
-                if(players.get(indexPlayerInTurn).getNumberCartsLeft()==0){
-
-                    System.exit(0);
-                }
-
-            }
-            if(cartPlayed == true){
-                if(newCart instanceof  Draw2Cart){
-                    playDar2CartForPlayer(indexPlayerInTurn);
-                }else if(newCart instanceof ReverseCart){
-                    indexPlayerInTurn++;
-                    if(indexPlayerInTurn==players.size()) {
-                        indexPlayerInTurn = indexPlayerInTurn % players.size();
-                    }
-                    reverseRotation();
-                }else if(newCart instanceof SkipCart){
-                    indexPlayerInTurn--;
-                    if(indexPlayerInTurn<0){
-                        indexPlayerInTurn+=players.size();
-                    }
-                }
-            }
-
-            //now we move to the next Player
-            if( clockWise ){
-                indexPlayerInTurn++;
-                if(indexPlayerInTurn==players.size()) {
-                    indexPlayerInTurn = indexPlayerInTurn % players.size();
-                }
-            }else{
-                indexPlayerInTurn--;
-                if(indexPlayerInTurn<0){
-                    indexPlayerInTurn+=players.size();
-                }
-            }
-
-
-        }
-    }
 
 }

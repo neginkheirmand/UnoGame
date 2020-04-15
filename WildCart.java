@@ -8,11 +8,8 @@ public class WildCart extends Cart {
 
     @Override
     public boolean canPlayCart(Cart lastCartPlayed){
-        if(lastCartPlayed instanceof WildCart|| lastCartPlayed.getColor().equals(this.color)){
-            return true;
-        }else{
-            return false;
-        }
+        //this method should be used within the method in the Player class called otherChoice()
+        return true;
     }
 
 }

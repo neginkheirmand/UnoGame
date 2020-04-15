@@ -61,17 +61,30 @@ public class Player {
         }
     }
 
-    private int numPlayableCarts(Cart lastPlayedCart){
-        int canPlayNum=0;
+    private int numPlayableNormalCarts(Cart lastPlayedCart){
+        int canPlayNum = 0;
         for(int i=0; i<playersCarts.size(); i++){
-            if(playersCarts.get(i).canPlayCart(lastPlayedCart)){
+            if(playersCarts.get(i) instanceof WildDrawCart || playersCarts.get(i) instanceof WildCart){
+                continue;
+            }
+            else if(playersCarts.get(i).canPlayCart(lastPlayedCart)){
                 canPlayNum++;
             }
         }
         return canPlayNum;
     }
 
-    private void printCarts(Cart lastPlayedCart){
+    private int numWildKindedCarts(Cart lastPlayedCart){
+        int wildCarts = 0;
+        for(int i=0; i<playersCarts.size(); i++){
+            if(playersCarts.get(i) instanceof WildDrawCart || playersCarts.get(i) instanceof WildCart){
+                wildCarts++;
+            }
+        }
+        return wildCarts;
+    }
+
+    public void printCarts(Cart lastPlayedCart){
 
         int numHandCarts = playersCarts.size();
         int numberOfRepetition = 0;
@@ -114,19 +127,35 @@ public class Player {
             if (numHandCarts >= 7) {
                 for (int k = 0; k < 7; k++) {
                     if ((k + 1 + (numberOfRepetition * 7)) < 10) {
-                        if(playersCarts.get((k + 1 + (numberOfRepetition * 7))-1).canPlayCart(lastPlayedCart)){
+                        if(playersCarts.get((k + 1 + (numberOfRepetition * 7))-1) instanceof WildCart || playersCarts.get((k + 1 + (numberOfRepetition * 7))-1) instanceof WildDrawCart ){
+                            if(numPlayableNormalCarts(lastPlayedCart) == 0){
+                                //then you can use the wild cart
+                                System.out.printf("\033[0;35m");
+                            }else{
+                                //you cannot, cause you already have other carts you can play with
+                                System.out.printf("\033[0m");
+                            }
+                        }else if(playersCarts.get((k + 1 + (numberOfRepetition * 7))-1).canPlayCart(lastPlayedCart)){
                             System.out.printf("\033[0;35m");
                         }else{
                             System.out.printf("\033[0m");
                         }
                         System.out.printf("     " + (k + 1 + (numberOfRepetition * 7)) + "     ");
                     } else {
-                        if(playersCarts.get(k + 1 + (numberOfRepetition * 7)).canPlayCart(lastPlayedCart)){
+                        if(playersCarts.get(k + 1 + (numberOfRepetition * 7)) instanceof WildCart || playersCarts.get(k + 1 + (numberOfRepetition * 7)) instanceof WildDrawCart){
+                            if(numPlayableNormalCarts(lastPlayedCart)==0){
+                                System.out.printf("\033[0;35m");
+                            }else{
+                                System.out.printf("\033[0m");
+                            }
+                        }else if(playersCarts.get(k + 1 + (numberOfRepetition * 7)).canPlayCart(lastPlayedCart)){
                             System.out.printf("\033[0;35m");
                         }else{
                             System.out.printf("\033[0m");
                         }
                         System.out.printf("    " + (k + 1 + (numberOfRepetition * 7)) + "     ");
+                        //QUESTION : ALAN MAGE PRINT AZ YEK SHURU NEMISHE??
+                        // MANTEGHAN AGE INTORI BASHE IN GHALAT
 
                     }
                 }
@@ -151,11 +180,17 @@ public class Player {
             numHandCarts -= 7;
             numberOfRepetition++;
         }
+        if(playersCarts.size()==1){
+            System.out.println("UNO!");
+        }
     }
 
     private int chose(Cart lastPlayedCart) {//the else works perfectly
         //we have to make sure that this player has at least one cart in his/her hands
-        int canPlayNum = numPlayableCarts(lastPlayedCart);
+        int canPlayNum = numPlayableNormalCarts(lastPlayedCart);
+        if(canPlayNum == 0){
+            canPlayNum = numWildKindedCarts(lastPlayedCart);
+        }
         System.out.println();
         if (canPlayNum == 0) {
             //cannot play
@@ -172,7 +207,9 @@ public class Player {
             while(input>=playersCarts.size()||input<0 || !playersCarts.get(input).canPlayCart(lastPlayedCart)){
                 System.out.println("\033[0m"+"Please enter a valid number, you have to chose between the purple numbers"+"\033[0;35m");
                 for(int i=0; i<playersCarts.size(); i++){
-                    if(playersCarts.get(i).canPlayCart(lastPlayedCart)) {
+                    if((playersCarts.get(i) instanceof WildDrawCart || playersCarts.get(i) instanceof WildCart) && numPlayableNormalCarts(lastPlayedCart)==0){
+                        System.out.printf("%d ", i+1);
+                    }else if(playersCarts.get(i).canPlayCart(lastPlayedCart)) {
                         System.out.printf("%d ", i+1);
                     }
                 }
@@ -190,4 +227,37 @@ public class Player {
     public String getNamePlayer(){
         return namePlayer;
     }
+
+    public boolean otherChoice(Cart lastCart){
+        //this method is used for the wild-kinded carts to see if they are allowed to be played with
+        Cart cartInPlayersHands;
+        for(int i=0; i<playersCarts.size(); i++){
+            cartInPlayersHands = playersCarts.get(i);
+            if(cartInPlayersHands instanceof WildCart || cartInPlayersHands instanceof WildDrawCart){
+                continue;
+            }else if( cartInPlayersHands instanceof NumericCart){
+                cartInPlayersHands = (NumericCart) playersCarts.get(i);
+                if(cartInPlayersHands.canPlayCart(lastCart)){
+                    return false;
+                }
+            }else if( cartInPlayersHands instanceof Draw2Cart){
+                cartInPlayersHands = (Draw2Cart) playersCarts.get(i);
+                if(cartInPlayersHands.canPlayCart(lastCart)){
+                    return false;
+                }
+            }else if( cartInPlayersHands instanceof ReverseCart){
+                cartInPlayersHands = (ReverseCart) playersCarts.get(i);
+                if(cartInPlayersHands.canPlayCart(lastCart)){
+                    return false;
+                }
+            }else if( cartInPlayersHands instanceof SkipCart) {
+                cartInPlayersHands = (SkipCart) playersCarts.get(i);
+                if (cartInPlayersHands.canPlayCart(lastCart)) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
 }
