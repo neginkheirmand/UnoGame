@@ -157,7 +157,7 @@ public class Cart implements Action{
         return;
     }
 
-    public void PrintCart(){
+    public void printCart(){
         for(int i=0; i<7; i++){
             printLineOfCart(i);
             System.out.println();

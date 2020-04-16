@@ -15,7 +15,9 @@ public class NumericCart extends Cart{
 
     @Override
     public boolean canPlayCart(Cart lastCartPlayed){
-        if(lastCartPlayed instanceof NumericCart || lastCartPlayed.getColor().equals(this.color)){
+        if(lastCartPlayed instanceof NumericCart && ((NumericCart) lastCartPlayed).getNumber()==this.number){
+            return true;
+        }else if(lastCartPlayed.getColor().equals(this.color)){
             return true;
         }else{
             return false;

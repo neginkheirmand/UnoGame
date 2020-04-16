@@ -31,7 +31,6 @@ public class Player {
         for(int i=0; i<playersCarts.size(); i++){
             if(beRemovedCart.equals(playersCarts.get(i))){
                 playersCarts.remove(i);
-
                 return;
             }
         }
@@ -61,7 +60,53 @@ public class Player {
         }
     }
 
-    private int numPlayableNormalCarts(Cart lastPlayedCart){
+    public Cart playDraw2Cart(){
+        //this method is a defense method for the player to defend itself against a draw+2 cart
+        //and its called only if we are sure that there actually exists a draw+2 cart in his hand, but anyway
+        if(numDraw2Carts() == 0){
+            return null;
+        }
+        int numDraw2Cart = chooseDraw2Cart();
+        return getDraw2CartByNum(numDraw2Cart);
+    }
+
+    private Cart getDraw2CartByNum(int number){
+        for(int i=0, num=0; i<playersCarts.size(); i++){
+            if(playersCarts.get(i) instanceof Draw2Cart){
+                num++;
+                if(number == num){
+                    return playersCarts.get(i);
+                }
+            }
+        }
+        return  null;
+    }
+
+    private int chooseDraw2Cart() {
+        //we are sure that this player has Draw +2 carts in his/her hand
+        int numberOfDraw2Carts = numDraw2Carts();
+
+        for (int i = 0; i < 7; i++) {
+            for (int j = 0; j < numberOfDraw2Carts; j++) {
+                getDraw2CartByNum(j + 1).printLineOfCart(i);
+            }
+        }
+        System.out.println("\033[0;35m");
+        //since we will be able to use the Draw+2 cart
+        for (int i = 0; i < numberOfDraw2Carts; i++) {
+            System.out.printf("     " + (i+1) + "     ");
+        }
+
+        int choice = (new Scanner(System.in). nextInt());
+        while(choice<1||choice>numberOfDraw2Carts){
+            System.out.printf("Please enter a valid number");
+            choice = (new Scanner(System.in). nextInt());
+        }
+        return choice;
+    }
+
+    public int numPlayableNormalCarts(Cart lastPlayedCart){
+        //this method is public because it will be ussed in the Game Class for the miniRun method
         int canPlayNum = 0;
         for(int i=0; i<playersCarts.size(); i++){
             if(playersCarts.get(i) instanceof WildDrawCart || playersCarts.get(i) instanceof WildCart){
@@ -72,6 +117,16 @@ public class Player {
             }
         }
         return canPlayNum;
+    }
+
+    public int numDraw2Carts(){
+        int num =0;
+        for(int i=0; i<playersCarts.size(); i++){
+            if(playersCarts.get(i) instanceof Draw2Cart){
+                num++;
+            }
+        }
+        return num;
     }
 
     private int numWildKindedCarts(Cart lastPlayedCart){
@@ -180,9 +235,11 @@ public class Player {
             numHandCarts -= 7;
             numberOfRepetition++;
         }
+        System.out.printf("\033[0m");
         if(playersCarts.size()==1){
             System.out.println("UNO!");
         }
+        return;
     }
 
     private int chose(Cart lastPlayedCart) {//the else works perfectly

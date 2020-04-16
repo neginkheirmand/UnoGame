@@ -27,9 +27,6 @@ public class Main {
 //        }else{
 //            System.out.println("Still working on it :)");
 //        }
-
-
-
-//        Game Uno = new Game()
+        Game Uno = new Game(4);
     }
 }
