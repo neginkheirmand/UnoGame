@@ -56,7 +56,9 @@ public class Player {
             //no carts available to play
             return null;
         }else{
-            return playersCarts.get(chosenCart);
+            Cart playedCart = playersCarts.get(chosenCart);
+            playersCarts.remove(chosenCart);
+            return playedCart;
         }
     }
 
@@ -70,6 +72,28 @@ public class Player {
         return getDraw2CartByNum(numDraw2Cart);
     }
 
+    public Cart playWildDrawCart(){
+        //this method is a defense method for the player to defend itself against a draw+2 cart
+        //and its called only if we are sure that there actually exists a WildDraw+4 cart in his hand, but anyway
+        if(numWildDrawCarts()==0){
+            return null;
+        }
+        int numWildDrawCart = chooseWildDrawCart();
+        return getWildDrawCartByNum(numWildDrawCart);
+    }
+
+    private Cart getWildDrawCartByNum(int number){
+        for(int i=0, num=0; i<playersCarts.size(); i++){
+            if(playersCarts.get(i) instanceof WildDrawCart){
+                num++;
+                if(number == num){
+                    return playersCarts.get(i);
+                }
+            }
+        }
+        return  null;
+    }
+
     private Cart getDraw2CartByNum(int number){
         for(int i=0, num=0; i<playersCarts.size(); i++){
             if(playersCarts.get(i) instanceof Draw2Cart){
@@ -80,6 +104,30 @@ public class Player {
             }
         }
         return  null;
+    }
+
+    private int chooseWildDrawCart(){
+        //we are sure that this player has Wild Draw +4 carts in his/her hand
+        int numberOfWildDrawCarts = numWildDrawCarts();
+
+        for (int i = 0; i < 7; i++) {
+            for (int j = 0; j < numberOfWildDrawCarts; j++) {
+                getWildDrawCartByNum(j + 1).printLineOfCart(i);
+            }
+        }
+        System.out.println("\033[0;35m");
+        //since we will be able to use the Wild Draw +4 cart
+        for (int i = 0; i < numberOfWildDrawCarts; i++) {
+            System.out.printf("     " + (i+1) + "     ");
+        }
+
+        int choice = (new Scanner(System.in). nextInt());
+        while(choice<1||choice>numberOfWildDrawCarts){
+            System.out.printf("Please enter a valid number");
+            choice = (new Scanner(System.in). nextInt());
+        }
+        return choice;
+
     }
 
     private int chooseDraw2Cart() {
@@ -139,14 +187,22 @@ public class Player {
         return wildCarts;
     }
 
+    public int numWildDrawCarts(){
+        int num=0;
+        for(int i=0; i<playersCarts.size(); i++){
+            if(playersCarts.get(i) instanceof WildDrawCart) {
+                num++;
+            }
+        }
+        return num;
+    }
     public void printCarts(Cart lastPlayedCart){
 
         int numHandCarts = playersCarts.size();
         int numberOfRepetition = 0;
         int nullPrinted = 0;
         while (numHandCarts > 0) {
-            //there will be printing 7 carts in each  segment of 10 rows
-
+            //there will be printing 7 carts in each  segment of 7+1 rows
             for (int i = 0; i < 7; i++) {
                 for (int j = 0; j < 7; j++) {
                     if (numHandCarts > 0 && numHandCarts < 7) {
@@ -179,39 +235,25 @@ public class Player {
                 }
                 System.out.println();
             }
+
             if (numHandCarts >= 7) {
                 for (int k = 0; k < 7; k++) {
-                    if ((k + 1 + (numberOfRepetition * 7)) < 10) {
-                        if(playersCarts.get((k + 1 + (numberOfRepetition * 7))-1) instanceof WildCart || playersCarts.get((k + 1 + (numberOfRepetition * 7))-1) instanceof WildDrawCart ){
-                            if(numPlayableNormalCarts(lastPlayedCart) == 0){
-                                //then you can use the wild cart
-                                System.out.printf("\033[0;35m");
-                            }else{
-                                //you cannot, cause you already have other carts you can play with
-                                System.out.printf("\033[0m");
-                            }
-                        }else if(playersCarts.get((k + 1 + (numberOfRepetition * 7))-1).canPlayCart(lastPlayedCart)){
+                    if(playersCarts.get(k + (numberOfRepetition * 7)) instanceof WildCart || playersCarts.get(k + (numberOfRepetition * 7)) instanceof WildDrawCart){
+                        if(numPlayableNormalCarts(lastPlayedCart)==0){
                             System.out.printf("\033[0;35m");
                         }else{
                             System.out.printf("\033[0m");
                         }
+                    }else if(playersCarts.get(k + (numberOfRepetition * 7)).canPlayCart(lastPlayedCart)){
+                        System.out.printf("\033[0;35m");
+                    }else{
+                        System.out.printf("\033[0m");
+                    }
+                    //the color of this next printed number was choosen in the last if and else statements
+                    if ((k + 1 + (numberOfRepetition * 7)) < 10) {
                         System.out.printf("     " + (k + 1 + (numberOfRepetition * 7)) + "     ");
                     } else {
-                        if(playersCarts.get(k + 1 + (numberOfRepetition * 7)) instanceof WildCart || playersCarts.get(k + 1 + (numberOfRepetition * 7)) instanceof WildDrawCart){
-                            if(numPlayableNormalCarts(lastPlayedCart)==0){
-                                System.out.printf("\033[0;35m");
-                            }else{
-                                System.out.printf("\033[0m");
-                            }
-                        }else if(playersCarts.get(k + 1 + (numberOfRepetition * 7)).canPlayCart(lastPlayedCart)){
-                            System.out.printf("\033[0;35m");
-                        }else{
-                            System.out.printf("\033[0m");
-                        }
                         System.out.printf("    " + (k + 1 + (numberOfRepetition * 7)) + "     ");
-                        //QUESTION : ALAN MAGE PRINT AZ YEK SHURU NEMISHE??
-                        // MANTEGHAN AGE INTORI BASHE IN GHALAT
-
                     }
                 }
                 System.out.println();
@@ -221,8 +263,18 @@ public class Player {
                 for (int k = 0; k < (nullPrinted / 7); k++) {
                     System.out.printf("           ");
                 }
-
                 for (int k = 0; k < numHandCarts; k++) {
+                    if(playersCarts.get(k  + (numberOfRepetition * 7)) instanceof WildCart || playersCarts.get(k  + (numberOfRepetition * 7)) instanceof WildDrawCart){
+                        if(numPlayableNormalCarts(lastPlayedCart)==0){
+                            System.out.printf("\033[0;35m");
+                        }else{
+                            System.out.printf("\033[0m");
+                        }
+                    }else if(playersCarts.get(k  + (numberOfRepetition * 7)).canPlayCart(lastPlayedCart)){
+                        System.out.printf("\033[0;35m");
+                    }else{
+                        System.out.printf("\033[0m");
+                    }
                     if ((k + 1 + (numberOfRepetition * 7)) < 10) {
                         System.out.printf("     " + (k + 1 + (numberOfRepetition * 7)) + "     ");
                     } else {
@@ -251,7 +303,7 @@ public class Player {
         System.out.println();
         if (canPlayNum == 0) {
             //cannot play
-            System.out.println("you cannot choose any of your card's\nYour carts are:");
+            System.out.println("you cannot choose any of your cart's\nYour carts are:");
             printCarts(lastPlayedCart);
             return -1;
         }else{
@@ -270,6 +322,7 @@ public class Player {
                         System.out.printf("%d ", i+1);
                     }
                 }
+                System.out.println();
                 input = (new Scanner(System.in)).nextInt();
                 input-=1;
             }

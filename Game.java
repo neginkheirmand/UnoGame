@@ -3,12 +3,14 @@ package ir.ac.aut;
 import java.util.ArrayList;
 import java.util.Random;
 import java.util.Collections;
+import java.util.Scanner;
 
 public class Game {
     //the last cart added (las index cart) in this Array List is the last one added
     private ArrayList<Cart> carts;
     private ArrayList<Player> players;
 
+    private static COLOR baseColorOfGame;
     private COLOR baseColor;
     private boolean clockWise;
 //        System.out.println("\u21BA");   (counter clock wise)
@@ -90,6 +92,8 @@ public class Game {
 
         clockWise = true;
         printAllPlayersCarts();
+
+        baseColor = carts.get(0).getColor();
         run();
 
     }
@@ -101,11 +105,6 @@ public class Game {
 
     private void reverseRotation(){
         clockWise=!clockWise;
-        return;
-    }
-
-    private void updateBaseColor(Cart lastPlayedCart){
-        baseColor = lastPlayedCart.getColor();
         return;
     }
 
@@ -131,7 +130,7 @@ public class Game {
         int roundsAdvanced = 1;
         while (true) {
             if (players.get(indexPlayer).numDraw2Carts() == 0) {
-                System.out.println("since the player" + players.get(indexPlayer).getNamePlayer() + " doesnt have any draw+2 carts to defend it self with :draw+" + 2 * roundsAdvanced + " carts");
+                System.out.println("since the player" + players.get(indexPlayer).getNamePlayer() + " doesnt have any draw+2 carts to defend it self with:\n draw+" + 2 * roundsAdvanced + " carts");
                 for (int i = 0; i < 2 * roundsAdvanced; i++) {
                     players.get(indexPlayer).addCart(carts.get(0));
                     carts.remove(0);
@@ -187,6 +186,123 @@ public class Game {
         }
     }
 
+    private void miniWildCartRun(){
+        baseColor = getColorFromPlayer();
+        return;
+    }
+
+    private int miniRunWildDrawCart(int indexPlayer){
+        //so that the color in the center is updated
+        int advanced=1;
+        while (true) {
+            miniWildCartRun();
+            if (players.get(indexPlayer).numWildDrawCarts() == 0) {
+                System.out.println("since the player" + players.get(indexPlayer).getNamePlayer() + " doesnt have any Wild Draw+4 carts to defend it self with:\n has to draw+" + 2 * advanced + " carts");
+                for (int i = 0; i < 4 * advanced; i++) {
+                    players.get(indexPlayer).addCart(carts.get(0));
+                    carts.remove(0);
+                }
+                return advanced;
+            }
+
+            //player has Wild Draw +4 carts available to play with
+            Cart newCart = players.get(indexPlayer).playWildDrawCart();
+            newCart.printCart();
+            //we are sure that the cart newCart is a draw +2 cart
+            advanced++;
+            carts.add(newCart);
+            System.out.println("since the player, played a Wild Draw+4 cart, the draw consequence is for the next player");
+
+            //if the cursor is here then it means that the player has played a Wild draw cart
+            //check if the game is over or if this player still has carts left in his hands
+            if (players.get(indexPlayer).getNumberCartsLeft() == 0) {
+                //Game over
+                if (clockWise) {
+                    for (int i = 0; i < 4 * advanced; i++) {
+                        players.get((indexPlayer + 1) % players.size()).addCart(carts.get(0));
+                        carts.remove(0);
+                    }
+                } else {
+                    if (indexPlayer - 1 >= 0) {
+                        for (int i = 0; i < 4 * advanced; i++) {
+                            players.get(indexPlayer - 1).addCart(carts.get(0));
+                            carts.remove(0);
+                        }
+                    } else {
+                        for (int i = 0; i < 4 * advanced; i++) {
+                            players.get(players.size() - 1).addCart(carts.get(0));
+                            carts.remove(0);
+                        }
+                    }
+                }
+                printEndGame();
+                System.exit(0);
+            }
+
+            if(clockWise==true){
+                indexPlayer++;
+                if(indexPlayer==players.size()){
+                    indexPlayer=0;
+                }
+            }else {
+                indexPlayer--;
+                if (indexPlayer == -1) {
+                    indexPlayer = players.size() - 1;
+                }
+            }
+        }
+
+    }
+
+    private COLOR getColorFromPlayer(){
+
+        String c =  COLOR.getBackGroundColor(COLOR.RED);
+        String r = "\033[0m";
+        System.out.println(COLOR.getColor(COLOR.RED)+"Select " + COLOR.getColor(COLOR.BLUE) + "A " + COLOR.getColor(COLOR.GREEN) +"Color"+r);
+        System.out.println("1)");
+        System.out.println("    "+c+"RRR"+r+"       "+c+"EEEEE"+r+"      "+c+"D"+r+"       ");
+        System.out.println("    "+c+"R"+r+"  "+c+"R"+r+"      "+c+"E"+r+"         "+c+"D"+r+"   "+c+"D"+r+"    ");
+        System.out.println("    "+c+"RRR"+r+"       "+c+"EEEEE"+r+"     "+c+"D"+r+"    "+c+"D"+r+"   ");
+        System.out.println("    "+c+"R"+r+" "+c+"R"+r+"       "+c+"E"+r+"         "+c+"D"+r+"  "+c+"D"+r+"     ");
+        System.out.println("    "+c+"R"+r+"  "+c+"R"+r+"      "+ c+"EEEEE"+r+"     "+c+"DD"+r+"      ");
+        System.out.println();
+
+        c= COLOR.getBackGroundColor(COLOR.BLUE);
+        System.out.println("2)");
+        System.out.println("    "+c+"BBB"+r+"      "+c+"L"+r+"       "+c+"U"+r+"   "+c+"U"+r+"     "+c+"EEEEE"+r);
+        System.out.println("    "+c+"B"+r+"  "+c+"B"+r+"     "+c+"L"+r+"       "+c+"U"+r+"   "+c+"U"+r+"     "+c+"E"+r);
+        System.out.println("    "+c+"BBB"+r+"      "+c+"L"+r+"       "+c+"U"+r+"   "+c+"U"+r+"     "+c+"EEEEE"+r);
+        System.out.println("    "+c+"B"+r+"  "+c+"B"+r+"     "+c+"L"+r+"       "+c+"U"+r+"   "+c+"U"+r+"     "+c+"E"+r);
+        System.out.println("    "+c+"BBB"+r+"      "+c+"LLLLL"+r+"    "+c+"UUU"+r+"      "+c+"EEEEE"+r);
+        System.out.println();
+
+        c= COLOR.getBackGroundColor(COLOR.YELLOW);
+        System.out.println("3)");
+        System.out.println("    "+c+"YYY"+r+"   "+c+"YYY"+r+"    "+c+"EEEEE"+r+"    "+c+"L"+r+"        "+c+"L"+r+"       "+c+"OOO"+r+"    "+c+"WWW"+r+"   "+c+"WWWW"+r+"    "+c+"WWW"+r);
+        System.out.println("     "+c+"Y"+r+"     "+c+"Y"+r+"     "+c+"E"+r+"        "+c+"L"+r+"        "+c+"L"+r+"      "+c+"O"+r+"   "+c+"O"+r+"     "+c+"W"+r+"    "+c+"WW"+r+"     "+c+"W"+r);
+        System.out.println("       "+c+"YYY"+r+"       "+c+"EEEEE"+r+"    "+c+"L"+r+"        "+c+"L"+r+"      "+c+"O"+r+"   "+c+"O"+r+"      "+c+"W"+r+"  "+c+"W"+r+"  "+c+"W"+r+"   "+c+"W"+r);
+        System.out.println("        "+c+"Y"+r+"        "+c+"E"+r+"        "+c+"L"+r+"        "+c+"L"+r+"      "+c+"O"+r+"   "+c+"O"+r+"       "+c+"W"+r+" "+c+"W"+r+"   "+c+"W"+r+" "+c+"W"+r);
+        System.out.println("        "+c+"Y"+r+"        "+c+"EEEEE"+r+"    "+c+"LLLLL"+r+"    "+c+"LLLLL"+r+"   "+c+"OOO"+r+"        "+c+"WWW"+r+"   "+c+"WWW"+r);
+        System.out.println();
+
+        c= COLOR.getBackGroundColor(COLOR.GREEN);
+        System.out.println("4)");
+        System.out.println("     "+c+"GGG"+r+"        "+c+"RRR"+r+"       "+c+"EEEEE"+r+"     "+c+"EEEEE"+r+"     "+c+"N"+r+"     "+c+"N"+r);
+        System.out.println("    "+c+"G"+r+"           "+c+"R"+r+"  "+c+"R"+r+"      "+c+"E"+r+"         "+c+"E"+r+"         "+c+"N"+r+" "+c+"N"+r+"   "+c+"N"+r);
+        System.out.println("    "+c+"G"+r+"  "+c+"GG"+r+"       "+c+"RRR"+r+"       "+c+"EEEEE"+r+"     "+c+"EEEEE"+r+"     "+c+"N"+r+"  "+c+"N"+r+"  "+c+"N"+r);
+        System.out.println("    "+c+"G"+r+"   "+c+"G"+r+"       "+c+"R"+r+" "+c+"R"+r+"       "+c+"E"+r+"         "+c+"E"+r+"         "+c+"N"+r+"   "+c+"N"+r+" "+c+"N"+r);
+        System.out.println("     "+c+"GGG"+r+"        "+c+"R"+r+"  "+c+"R"+r+"      "+c+"EEEEE"+r+"     "+c+"EEEEE"+r+"     "+c+"N"+r+"    "+c+"NN"+r);
+        System.out.println();
+
+        int choice = (new Scanner(System.in)).nextInt();
+        while(choice <1 ||choice>4){
+            System.out.println(COLOR.getColor(COLOR.RED)+"Enter " + COLOR.getColor(COLOR.BLUE) + "A " + COLOR.getColor(COLOR.GREEN) +"Valid "+COLOR.getColor(COLOR.YELLOW)+"Number"+r);
+            choice = (new Scanner(System.in)).nextInt();
+        }
+        choice--;
+        return COLOR.getColorByIndex(choice);
+    }
+
     private void run(){
         int indexPlayerInTurn = (new Random()).nextInt(players.size());
         System.out.println("the game begins with the player number "+(indexPlayerInTurn+1)+" name of player:  "+players.get(indexPlayerInTurn).getNamePlayer());
@@ -202,10 +318,7 @@ public class Game {
                 indexPlayerInTurn = indexPlayerInTurn% players.size();
             }
         }else if(lastCart instanceof ReverseCart){
-            indexPlayerInTurn--;
-            if(indexPlayerInTurn==-1) {
-                indexPlayerInTurn = players.size()-1;
-            }
+            //if the game starts with a reverse cart the player choosen to start can play but the rotation after that player will be Counter Clock-Wise
             reverseRotation();
         }else if(lastCart instanceof SkipCart){
             indexPlayerInTurn++;
@@ -215,8 +328,18 @@ public class Game {
         }
         while (true){
             lastCart=getLastCart();
+
             System.out.println("the cart in the center is:");
             lastCart.printCart();
+
+            if(lastCart instanceof WildDrawCart){
+                System.out.println(" and base color chosen was :"+COLOR.getColor(baseColor)+baseColor.name()+"\033[0m");
+                lastCart = new Cart(0, baseColor);
+            }else if(lastCart instanceof WildCart){
+                System.out.println(" and base color chosen was :"+COLOR.getColor(baseColor)+baseColor.name()+"\033[0m");
+                lastCart = new Cart(0, baseColor);
+            }
+
             System.out.println("Turn of"+ players.get(indexPlayerInTurn).getNamePlayer());
             Cart newCart = players.get(indexPlayerInTurn).playCart(lastCart);
             boolean cartPlayed = false;
@@ -226,7 +349,7 @@ public class Game {
                 carts.remove(0);
                 newCart = players.get(indexPlayerInTurn).playCart(lastCart);
                 if(newCart == null){
-                    System.out.printf("No carts available for player "+ players.get(indexPlayerInTurn).getNamePlayer()+" to play ");
+                    System.out.println("No carts available for player "+ players.get(indexPlayerInTurn).getNamePlayer()+" to play");
                 }else{
                     System.out.println("the cart you played:");
                     newCart.printCart();
@@ -275,6 +398,24 @@ public class Game {
                         }
                     }
                     System.out.println("the player " + players.get(indexPlayerInTurn).getNamePlayer() +" lost his/her turn");
+                }else if(newCart instanceof WildCart){
+                    miniWildCartRun();
+                }else if(newCart instanceof WildDrawCart){
+                    if(clockWise){
+                        int advance = miniRunWildDrawCart((indexPlayerInTurn+1)%players.size());
+                        indexPlayerInTurn += advance;
+                        indexPlayerInTurn = indexPlayerInTurn % players.size();
+                    }else{
+                        int indexNext = indexPlayerInTurn -1;
+                        if(indexNext == -1){
+                            indexNext = players.size()-1;
+                        }
+                        int advance = miniRunWildDrawCart(indexNext);
+                        indexPlayerInTurn -= advance;
+                        while(indexPlayerInTurn<0){
+                            indexPlayerInTurn = players.size() + indexPlayerInTurn;
+                        }
+                    }
                 }
             }
 
@@ -358,8 +499,8 @@ public class Game {
             }else{
                 max = players.get(1).getNamePlayer().length();
             }
-            for(int i=0; i<max; i++){
-                if(i==max/2){
+            for(int i=0; i<max+3; i++){
+                if(i-2==max/2){
                     System.out.printf(rotationUniCode);
                 }
                 System.out.printf(" ");
