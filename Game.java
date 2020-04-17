@@ -197,7 +197,7 @@ public class Game {
         while (true) {
             miniWildCartRun();
             if (players.get(indexPlayer).numWildDrawCarts() == 0) {
-                System.out.println("since the player" + players.get(indexPlayer).getNamePlayer() + " doesnt have any Wild Draw+4 carts to defend it self with:\n has to draw+" + 2 * advanced + " carts");
+                System.out.println("since the player" + players.get(indexPlayer).getNamePlayer() + " doesnt have any Wild Draw+4 carts to defend it self with:\n has to draw+" + 4 * advanced + " carts");
                 for (int i = 0; i < 4 * advanced; i++) {
                     players.get(indexPlayer).addCart(carts.get(0));
                     carts.remove(0);
@@ -340,7 +340,7 @@ public class Game {
                 lastCart = new Cart(0, baseColor);
             }
 
-            System.out.println("Turn of"+ players.get(indexPlayerInTurn).getNamePlayer());
+            System.out.println("Turn of "+ players.get(indexPlayerInTurn).getNamePlayer());
             Cart newCart = players.get(indexPlayerInTurn).playCart(lastCart);
             boolean cartPlayed = false;
 

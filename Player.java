@@ -196,6 +196,7 @@ public class Player {
         }
         return num;
     }
+
     public void printCarts(Cart lastPlayedCart){
 
         int numHandCarts = playersCarts.size();
@@ -313,21 +314,41 @@ public class Player {
             System.out.println("\033[0m"+"please choose the cart you want to play:");
             input = (new Scanner(System.in)).nextInt();
             input-=1;
-            while(input>=playersCarts.size()||input<0 || !playersCarts.get(input).canPlayCart(lastPlayedCart)){
-                System.out.println("\033[0m"+"Please enter a valid number, you have to chose between the purple numbers"+"\033[0;35m");
-                for(int i=0; i<playersCarts.size(); i++){
-                    if((playersCarts.get(i) instanceof WildDrawCart || playersCarts.get(i) instanceof WildCart) && numPlayableNormalCarts(lastPlayedCart)==0){
-                        System.out.printf("%d ", i+1);
-                    }else if(playersCarts.get(i).canPlayCart(lastPlayedCart)) {
-                        System.out.printf("%d ", i+1);
+            int[] container= new int[playersCarts.size()];
+            int exp=0;
+            for(int i=0 ; i<playersCarts.size(); i++){
+                if((playersCarts.get(i) instanceof WildDrawCart || playersCarts.get(i) instanceof WildCart) ){
+                    if(numPlayableNormalCarts(lastPlayedCart)==0) {
+                        container[exp]=i+1;
+                        exp++;
+//                        System.out.printf("\033[1;95m" + "%d ", i + 1);
                     }
+                }else if(playersCarts.get(i).canPlayCart(lastPlayedCart)) {
+//                    System.out.printf("\033[1;94m"+"%d ", i+1);
+                    container[exp]=i+1;
+                    exp++;
                 }
-                System.out.println();
+            }
+            while(input>=playersCarts.size()||input<0 || !existsInArr(container, exp, input+1)){
+                System.out.println("\033[0m"+"Please enter a valid number, you have to chose between the purple numbers"+"\033[0;35m");
+                for(int i=0; i<exp; i++){
+                    System.out.printf("\033[1;35m"+"%d ", container[i]);
+                }
+                System.out.println( "\033[0m");
                 input = (new Scanner(System.in)).nextInt();
                 input-=1;
             }
             return input;
         }
+    }
+
+    private boolean existsInArr(int [] container, int size, int input){
+        for(int i=0; i<size; i++){
+            if(container[i]==input){
+                return true;
+            }
+        }
+        return false;
     }
 
     public int numberOfCarts(){
