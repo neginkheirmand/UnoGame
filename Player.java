@@ -69,7 +69,14 @@ public class Player {
             return null;
         }
         int numDraw2Cart = chooseDraw2Cart();
-        return getDraw2CartByNum(numDraw2Cart);
+        Cart temp = getDraw2CartByNum(numDraw2Cart);
+        for (int i=0; i<playersCarts.size(); i++){
+            if(temp == playersCarts.get(i)){
+                //since temp is alse a reference to one the carts arraylist we can use the ( == ) operation
+                playersCarts.remove(i);
+            }
+        }
+        return temp;
     }
 
     public Cart playWildDrawCart(){
@@ -79,7 +86,13 @@ public class Player {
             return null;
         }
         int numWildDrawCart = chooseWildDrawCart();
-        return getWildDrawCartByNum(numWildDrawCart);
+        Cart temp = getWildDrawCartByNum(numWildDrawCart);
+        for(int i=0; i<playersCarts.size(); i++){
+            if(playersCarts.get(i) == temp){
+                playersCarts.remove(i);
+            }
+        }
+        return temp;
     }
 
     private Cart getWildDrawCartByNum(int number){

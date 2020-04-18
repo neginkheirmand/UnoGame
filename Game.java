@@ -145,7 +145,7 @@ public class Game {
             //we are sure that the cart newCart is a draw +2 cart
             roundsAdvanced++;
             carts.add(newCart);
-            System.out.println("since the player, played a draw+2 cart, the draw consequence is for the next player");
+            System.out.println("since the player "+players.get(indexPlayer).getNamePlayer()+", played a draw+2 cart, the draw consequence is for the next player");
 
             //if the cursor is here then it means that the player has played a draw cart
             //check if the game is over or if this player still has carts left in his hands
@@ -309,7 +309,7 @@ public class Game {
         System.out.println("the game begins with the player number "+(indexPlayerInTurn+1)+" name of player:  "+players.get(indexPlayerInTurn).getNamePlayer());
         Cart lastCart=getLastCart();
         //first we print the cart in the center
-        printRoundInfo();
+//        printRoundInfo();
         //first round:
         if(lastCart instanceof Draw2Cart){
             //its the start of the game and we know that the rotation is clock-wise kinded so we will just add the advanced times;
@@ -328,6 +328,7 @@ public class Game {
             }
         }
         while (true){
+            printRoundInfo();
             lastCart=getLastCart();
 
             System.out.println("the cart in the center is:");
@@ -470,22 +471,25 @@ public class Game {
         int minScore=500000;
         int index=0;
 
-        for(int i=0; i < players.size()-1; i++){
-            minScore=500000;
-            int anotherIndex=-1;
-            for(int j=i+1; j < players.size(); j++){
-                if(minScore>tempScores[j][1]){
-                    minScore=tempScores[j][1];
+        for(int i=0; i < players.size()-1; i++) {
+            minScore = tempScores[i][1];
+            int anotherIndex = tempScores[i][0];
+            index = i;
+            for (int j = i + 1; j < players.size(); j++) {
+                if (minScore > tempScores[j][1]) {
+                    minScore = tempScores[j][1];
                     index = j;
-                    anotherIndex = tempScores [j][0];
+                    anotherIndex = tempScores[j][0];
                 }
             }
-            int temp = tempScores[i][1];
-            int indexTemp = tempScores[i][0];
-            tempScores[i][1]=minScore;
-            tempScores[i][0]=anotherIndex;
-            tempScores[index][1]=temp;
-            tempScores[index][0]=indexTemp;
+            if (index != i) {
+                int temp = tempScores[i][1];
+                int indexTemp = tempScores[i][0];
+                tempScores[i][1] = minScore;
+                tempScores[i][0] = anotherIndex;
+                tempScores[index][1] = temp;
+                tempScores[index][0] = indexTemp;
+            }
         }
 
         for(int i=0; i<players.size(); i++){
@@ -512,7 +516,7 @@ public class Game {
             rotationUniCode ="\u21BB";
         }else{
             System.out.println("kind of rotation is Counter Clock-wise");
-            rotationUniCode = "\u21BB";
+            rotationUniCode = "\u21BA";
         }
 
         if(players.size()==2){
