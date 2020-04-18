@@ -31,37 +31,37 @@ public class Game {
                 }
             }
         }
-        System.out.println("the size of carts in this game after adding the numeric carts is:"+carts.size()+"  (should be 76)");
+//        System.out.println("the size of carts in this game after adding the numeric carts is:"+carts.size()+"  (should be 76)");
 
         //now the Skip carts (there are 8 of these carts in the game)
         for(int i=0; i<8; i++){
             carts.add(new SkipCart(COLOR.getColorByIndex(i%4)));
         }
-        System.out.println("the size of carts in this game after adding the Skip carts is:"+carts.size()+"  (should be 76 + 8 = 84)");
+//        System.out.println("the size of carts in this game after adding the Skip carts is:"+carts.size()+"  (should be 76 + 8 = 84)");
 
         //now the Reverse carts (there are 8 of these carts in the game)
         for(int i=0; i<8; i++){
             carts.add(new ReverseCart(COLOR.getColorByIndex(i%4)));
         }
-        System.out.println("the size of carts in this game after adding the Reverse carts is:"+carts.size()+"  (should be 76 + 8 +8 = 92)");
+//        System.out.println("the size of carts in this game after adding the Reverse carts is:"+carts.size()+"  (should be 76 + 8 +8 = 92)");
 
         //now the Draw +2 carts (there are 8 of these carts in the game)
         for(int i=0; i<8; i++){
             carts.add(new Draw2Cart(COLOR.getColorByIndex(i%4)));
         }
-        System.out.println("the size of carts in this game after adding the Draw +2 carts is:"+carts.size()+"  (should be 76 + 8 + 8 + 8 = 100)");
+//        System.out.println("the size of carts in this game after adding the Draw +2 carts is:"+carts.size()+"  (should be 76 + 8 + 8 + 8 = 100)");
 
         //now the Wild carts (there are 4 of these carts in the game)
         for(int i=0; i<4; i++){
             carts.add(new WildCart());
         }
-        System.out.println("the size of carts in this game after adding the Wild carts is:"+carts.size()+"  (should be 76 + 8 + 8 + 4 = 104)");
+//        System.out.println("the size of carts in this game after adding the Wild carts is:"+carts.size()+"  (should be 76 + 8 + 8 + 4 = 104)");
 
         //now the Wild Draw +4 carts (there are 4 of these carts in the game)
         for(int i=0; i<8; i++){
             carts.add(new WildDrawCart());
         }
-        System.out.println("the size of carts in this game after adding the Draw +2 carts is:"+carts.size()+"  (should be 76 + 8 + 8 + 4 + 4 = 108)");
+//        System.out.println("the size of carts in this game after adding the Draw +2 carts is:"+carts.size()+"  (should be 76 + 8 + 8 + 4 + 8 = 112)");
 
         //shuffle the carts
         shuffle();
@@ -78,6 +78,7 @@ public class Game {
                 carts.remove(j);
             }
             players.add(new Player("Player"+(i+1), firstCartPlayer));
+//            players.add(new Player(""+(i+1), firstCartPlayer));
         }
         //the last cart in the list should be of type other than Wild cart
 
@@ -436,7 +437,72 @@ public class Game {
     }
 
     private void printEndGame(){
-        System.out.println("the game is over but stil this part of the programm is not completed");
+
+        printAllPlayersCarts();
+
+        int maxName = 8;
+        for(int i=0; i<players.size(); i++){
+            if(maxName<players.get(i).getNamePlayer().length()){
+                maxName = players.get(i).getNamePlayer().length();
+            }
+        }
+
+        System.out.println();
+        System.out.printf(COLOR.getColor(COLOR.BLUE)+"Names:");
+        for(int i=0; i<maxName-6; i++){
+            System.out.printf(" ");
+        }
+        System.out.println(COLOR.getColor(COLOR.RED)+"|"+COLOR.getColor(COLOR.BLUE)+"  points:  "+COLOR.getColor(COLOR.RED)+"|");
+        for(int i=0; i<maxName+10; i++){
+            System.out.printf("-");
+        }
+        System.out.println(COLOR.getColor(COLOR.BLUE));
+
+        //azinja bayad be tartib print koni:
+        int[][] tempScores = new int[players.size()][2];
+//        [i][0] = index
+//        [i][1] = point
+
+        for(int i=0; i<players.size(); i++){
+            tempScores[i][1]=players.get(i).getPlayersPoint();
+            tempScores[i][0]=i;
+        }
+        int minScore=500000;
+        int index=0;
+
+        for(int i=0; i < players.size()-1; i++){
+            minScore=500000;
+            int anotherIndex=-1;
+            for(int j=i+1; j < players.size(); j++){
+                if(minScore>tempScores[j][1]){
+                    minScore=tempScores[j][1];
+                    index = j;
+                    anotherIndex = tempScores [j][0];
+                }
+            }
+            int temp = tempScores[i][1];
+            int indexTemp = tempScores[i][0];
+            tempScores[i][1]=minScore;
+            tempScores[i][0]=anotherIndex;
+            tempScores[index][1]=temp;
+            tempScores[index][0]=indexTemp;
+        }
+
+        for(int i=0; i<players.size(); i++){
+            System.out.printf(players.get(tempScores[i][0]).getNamePlayer());
+            for(int j=0; j<maxName-players.get(tempScores[i][0]).getNamePlayer().length(); j++){
+                System.out.printf(" ");
+            }
+            System.out.println(COLOR.getColor(COLOR.RED)+"|"+COLOR.getColor(COLOR.BLUE)+players.get(tempScores[i][0]).getPlayersPoint());
+        }
+        System.out.printf(COLOR.getColor(COLOR.RED));
+        for(int i=0; i<maxName+10; i++){
+            System.out.printf("-");
+        }
+        System.out.println("\033[0m");
+        return;
+
+
     }
 
     private void printBoard(){
@@ -458,7 +524,7 @@ public class Game {
                 System.out.printf(" ");
             }
             System.out.println("//      \\\\");
-            System.out.printf(players.get(0).getNamePlayer()+"    "+rotationUniCode+"    "+players.get(1).getNamePlayer());
+            System.out.println(players.get(0).getNamePlayer()+"    "+rotationUniCode+"    "+players.get(1).getNamePlayer());
             for(int i=0; i<players.get(0).getNamePlayer().length(); i++){
                 System.out.printf(" ");
             }
@@ -470,15 +536,29 @@ public class Game {
             System.out.println("   ----");
         }else if(players.size()==3){
 
-            for(int i=0; i<players.get(0).getNamePlayer().length()+1; i++){
+            for(int i=0; i<players.get(0).getNamePlayer().length()+3; i++){
                 System.out.printf(" ");
             }
             System.out.println(players.get(1).getNamePlayer());
             for(int i=0; i<players.get(0).getNamePlayer().length(); i++){
                 System.out.printf(" ");
             }
-            System.out.println("//   "+rotationUniCode+"  \\\\");
-            System.out.printf(players.get(0).getNamePlayer()+"----------"+players.get(2).getNamePlayer());
+            System.out.printf("//");
+            for(int i=0; i<players.get(1).getNamePlayer().length(); i++){
+                if(i==players.get(1).getNamePlayer().length()/2){
+                    System.out.printf(rotationUniCode);
+                }
+                System.out.printf(" ");
+            }
+            System.out.println("\\\\");
+
+
+            System.out.printf(players.get(0).getNamePlayer());
+            for(int i=0; i<players.get(1).getNamePlayer().length()+6; i++){
+                System.out.printf("-");
+            }
+            System.out.println(players.get(2).getNamePlayer());
+
         }else if(players.size()>=4){
             for(int i=0; i<players.get(0).getNamePlayer().length(); i++){
                 System.out.printf(" ");
@@ -571,7 +651,7 @@ public class Game {
     private void printAllPlayersCarts(){
         for(int i=0; i<players.size(); i++){
             System.out.println("Player number "+(i+1)+"s carts:");
-            players.get(i).printCarts(new Cart(10, COLOR.RED));
+            players.get(i).printCarts(new Cart(10, COLOR.BLUE));
         }
         System.out.println();
     }

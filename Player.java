@@ -114,6 +114,7 @@ public class Player {
             for (int j = 0; j < numberOfWildDrawCarts; j++) {
                 getWildDrawCartByNum(j + 1).printLineOfCart(i);
             }
+            System.out.println();
         }
         System.out.println("\033[0;35m");
         //since we will be able to use the Wild Draw +4 cart
@@ -138,6 +139,7 @@ public class Player {
             for (int j = 0; j < numberOfDraw2Carts; j++) {
                 getDraw2CartByNum(j + 1).printLineOfCart(i);
             }
+            System.out.println();
         }
         System.out.println("\033[0;35m");
         //since we will be able to use the Draw+2 cart
