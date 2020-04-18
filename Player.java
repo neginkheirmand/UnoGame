@@ -374,36 +374,4 @@ public class Player {
         return namePlayer;
     }
 
-    public boolean otherChoice(Cart lastCart){
-        //this method is used for the wild-kinded carts to see if they are allowed to be played with
-        Cart cartInPlayersHands;
-        for(int i=0; i<playersCarts.size(); i++){
-            cartInPlayersHands = playersCarts.get(i);
-            if(cartInPlayersHands instanceof WildCart || cartInPlayersHands instanceof WildDrawCart){
-                continue;
-            }else if( cartInPlayersHands instanceof NumericCart){
-                cartInPlayersHands = (NumericCart) playersCarts.get(i);
-                if(cartInPlayersHands.canPlayCart(lastCart)){
-                    return false;
-                }
-            }else if( cartInPlayersHands instanceof Draw2Cart){
-                cartInPlayersHands = (Draw2Cart) playersCarts.get(i);
-                if(cartInPlayersHands.canPlayCart(lastCart)){
-                    return false;
-                }
-            }else if( cartInPlayersHands instanceof ReverseCart){
-                cartInPlayersHands = (ReverseCart) playersCarts.get(i);
-                if(cartInPlayersHands.canPlayCart(lastCart)){
-                    return false;
-                }
-            }else if( cartInPlayersHands instanceof SkipCart) {
-                cartInPlayersHands = (SkipCart) playersCarts.get(i);
-                if (cartInPlayersHands.canPlayCart(lastCart)) {
-                    return false;
-                }
-            }
-        }
-        return true;
-    }
-
 }

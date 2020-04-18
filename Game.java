@@ -305,6 +305,7 @@ public class Game {
     }
 
     private void run(){
+        printEndGame();
         int indexPlayerInTurn = (new Random()).nextInt(players.size());
         System.out.println("the game begins with the player number "+(indexPlayerInTurn+1)+" name of player:  "+players.get(indexPlayerInTurn).getNamePlayer());
         Cart lastCart=getLastCart();
@@ -328,6 +329,7 @@ public class Game {
             }
         }
         while (true){
+            printEndGame();
             printRoundInfo();
             lastCart=getLastCart();
 
