@@ -192,6 +192,11 @@ public class Game {
         return;
     }
 
+    private void wildCardRunAI(int indexPcPlayer){
+        baseColor = ((PcPlayer)players.get(indexPcPlayer)).getColorAi(clockWise);
+        return;
+    }
+
     private int miniRunWildDrawCart(int indexPlayer){
         //so that the color in the center is updated
         int advanced=1;

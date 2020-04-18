@@ -30,6 +30,7 @@ public enum COLOR {
         }
         return null;
     }
+
     public static String getBackGroundColor(COLOR color){
         if(color.equals(COLOR.RED)){
             return "\u001b[48;5;101m";

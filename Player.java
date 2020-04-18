@@ -6,10 +6,10 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Player {
-    private final String namePlayer;
-    private int playersPoint;
+    protected final String namePlayer;
+    protected int playersPoint;
     //when adding a new cart YOU SHOULD CHECK IF HASNT ALREADY BEEN ADDED
-    private ArrayList<Cart> playersCarts;
+    protected ArrayList<Cart> playersCarts;
 
     public Player(String name, ArrayList<Cart> playersCarts){
         this.namePlayer=name;
@@ -17,25 +17,9 @@ public class Player {
         this.playersCarts=playersCarts;
     }
 
-    public void addPoint(int ponitsToAdd){
-        playersPoint+=ponitsToAdd;
-        return;
-    }
-
     public void addCart(Cart newCart){
         playersCarts.add(newCart);
         return;
-    }
-
-    public void removeCart(Cart beRemovedCart){
-        for(int i=0; i<playersCarts.size(); i++){
-            if(beRemovedCart.equals(playersCarts.get(i))){
-                playersCarts.remove(i);
-                return;
-            }
-        }
-        //BADAN IN RO PAK KON, FAGHAT BARAYE MOTMAEN SHODN
-        System.out.println("MOSHKEL TUYE FUNCTION RemoveCart az class Player, darE sai mikoni CartE ro remove koni ke tuye list cart haye in player nist");
     }
 
     public int getNumberCartsLeft(){
@@ -80,7 +64,7 @@ public class Player {
     }
 
     public Cart playWildDrawCart(){
-        //this method is a defense method for the player to defend itself against a draw+2 cart
+        //this method is a defense method for the player to defend itself against a draw+4 cart
         //and its called only if we are sure that there actually exists a WildDraw+4 cart in his hand, but anyway
         if(numWildDrawCarts()==0){
             return null;
@@ -192,7 +176,7 @@ public class Player {
         return num;
     }
 
-    private int numWildKindedCarts(Cart lastPlayedCart){
+    private int numWildKindedCarts(){
         int wildCarts = 0;
         for(int i=0; i<playersCarts.size(); i++){
             if(playersCarts.get(i) instanceof WildDrawCart || playersCarts.get(i) instanceof WildCart){
@@ -310,11 +294,11 @@ public class Player {
         return;
     }
 
-    private int chose(Cart lastPlayedCart) {//the else works perfectly
+    private int chose(Cart lastPlayedCart) {
         //we have to make sure that this player has at least one cart in his/her hands
         int canPlayNum = numPlayableNormalCarts(lastPlayedCart);
         if(canPlayNum == 0){
-            canPlayNum = numWildKindedCarts(lastPlayedCart);
+            canPlayNum = numWildKindedCarts();
         }
         System.out.println();
         if (canPlayNum == 0) {
@@ -323,10 +307,10 @@ public class Player {
             printCarts(lastPlayedCart);
             return -1;
         }else{
-            System.out.println("\033[0m"+"Chose one of your carts to play (the ones available for this round are in Magneta color)");
+            System.out.println("\033[0m"+"Chose one of your carts (the ones available for this round are in purple)");
             int input;
             printCarts(lastPlayedCart);
-            System.out.println("\033[0m"+"please choose the cart you want to play:");
+            System.out.println("\033[0m"+"please choose the cart");
             input = (new Scanner(System.in)).nextInt();
             input-=1;
             int[] container= new int[playersCarts.size()];
