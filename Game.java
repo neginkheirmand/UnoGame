@@ -6,7 +6,7 @@ import java.util.Collections;
 import java.util.Scanner;
 
 public class Game {
-    //the last cart added (las index cart) in this Array List is the last one added
+    //the last Card added (las index Card) in this Array List is the last one added
     private ArrayList<Cart> carts;
     private ArrayList<Player> players;
 
@@ -20,7 +20,7 @@ public class Game {
     public Game(int numPlayers){
 
         carts = new ArrayList<>();
-            //first we create the carts
+            //first we create the Cards
         //Numeric Carts first
         for(int k=0; k<2; k++) {
             //2 segments with the only difference of the zero numeric cart
@@ -305,7 +305,7 @@ public class Game {
     }
 
     private void run(){
-        printEndGame();
+//        printEndGame();
         int indexPlayerInTurn = (new Random()).nextInt(players.size());
         System.out.println("the game begins with the player number "+(indexPlayerInTurn+1)+" name of player:  "+players.get(indexPlayerInTurn).getNamePlayer());
         Cart lastCart=getLastCart();
@@ -329,7 +329,7 @@ public class Game {
             }
         }
         while (true){
-            printEndGame();
+//            printEndGame();
             printRoundInfo();
             lastCart=getLastCart();
 
@@ -455,8 +455,11 @@ public class Game {
         for(int i=0; i<maxName-6; i++){
             System.out.printf(" ");
         }
-        System.out.println(COLOR.getColor(COLOR.RED)+"|"+COLOR.getColor(COLOR.BLUE)+"  points:  "+COLOR.getColor(COLOR.RED)+"|");
-        for(int i=0; i<maxName+10; i++){
+        System.out.println(COLOR.getColor(COLOR.RED)+"|"+COLOR.getColor(COLOR.BLUE)+"  points:  "+COLOR.getColor(COLOR.RED)+"|"+COLOR.getColor(COLOR.BLUE)+" Number Of Carts: "+COLOR.getColor(COLOR.RED)+"");
+        for(int i=0; i<maxName+28; i++){
+            if(i==8||i==19){
+                System.out.printf("+");
+            }
             System.out.printf("-");
         }
         System.out.println(COLOR.getColor(COLOR.BLUE));
@@ -499,16 +502,34 @@ public class Game {
             for(int j=0; j<maxName-players.get(tempScores[i][0]).getNamePlayer().length(); j++){
                 System.out.printf(" ");
             }
-            System.out.println(COLOR.getColor(COLOR.RED)+"|"+COLOR.getColor(COLOR.BLUE)+players.get(tempScores[i][0]).getPlayersPoint());
+            System.out.printf(COLOR.getColor(COLOR.RED)+"|  "+COLOR.getColor(COLOR.BLUE)+players.get(tempScores[i][0]).getPlayersPoint());
+            for(int j=digit(players.get(tempScores[i][0]).getPlayersPoint()); j< 9; j++){
+                System.out.printf(" ");
+            }
+
+            System.out.println(COLOR.getColor(COLOR.RED)+"| "+COLOR.getColor(COLOR.BLUE)+players.get(tempScores[i][0]).numberOfCarts());
+
         }
         System.out.printf(COLOR.getColor(COLOR.RED));
-        for(int i=0; i<maxName+10; i++){
+        for(int i=0; i<maxName+28; i++){
+            if(i==8 || i==19){
+                System.out.printf("+");
+            }
             System.out.printf("-");
         }
         System.out.println("\033[0m");
         return;
 
 
+    }
+
+    private int digit(int a){
+        int digitNum=1;
+        while(a/10!=0){
+            a/=10;
+            digitNum++;
+        }
+        return digitNum;
     }
 
     private void printBoard(){
@@ -628,8 +649,11 @@ public class Game {
         for(int i=0; i<maxName-6; i++){
             System.out.printf(" ");
         }
-        System.out.println(COLOR.getColor(COLOR.RED)+"|"+COLOR.getColor(COLOR.BLUE)+"  points:  "+COLOR.getColor(COLOR.RED)+"|");
-        for(int i=0; i<maxName+10; i++){
+        System.out.println(COLOR.getColor(COLOR.RED)+"|"+COLOR.getColor(COLOR.BLUE)+"  points:  "+COLOR.getColor(COLOR.RED)+"| "+COLOR.getColor(COLOR.BLUE)+" Number Of Carts:"+COLOR.getColor(COLOR.RED));
+        for(int i=0; i<maxName+28; i++){
+            if(i==8||i==19){
+                System.out.printf("+");
+            }
             System.out.printf("-");
         }
         System.out.println(COLOR.getColor(COLOR.BLUE));
@@ -638,10 +662,18 @@ public class Game {
             for(int j=0; j<maxName-players.get(i).getNamePlayer().length(); j++){
                 System.out.printf(" ");
             }
-            System.out.println(COLOR.getColor(COLOR.RED)+"|"+COLOR.getColor(COLOR.BLUE)+players.get(i).getPlayersPoint());
+            System.out.printf(COLOR.getColor(COLOR.RED)+"|  "+COLOR.getColor(COLOR.BLUE)+players.get(i).getPlayersPoint());
+            for(int j=digit(players.get(i).getPlayersPoint()); j<9 ; j++){
+                System.out.printf(" ");
+            }
+            System.out.println(COLOR.getColor(COLOR.RED)+"|  "+COLOR.getColor(COLOR.BLUE)+players.get(i).numberOfCarts());
+
         }
         System.out.printf(COLOR.getColor(COLOR.RED));
-        for(int i=0; i<maxName+10; i++){
+        for(int i=0; i<maxName+28; i++){
+            if(i==8||i==19){
+                System.out.printf("+");
+            }
             System.out.printf("-");
         }
         System.out.println("\033[0m");
