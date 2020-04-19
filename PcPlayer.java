@@ -6,42 +6,48 @@ public class PcPlayer extends Player{
     private static COLOR[] nextPlayersColor={
         COLOR.RED, COLOR.BLUE, COLOR.YELLOW, COLOR.GREEN
     };
-    private static Cart[] nextPlayersTypeCards={
-            new SkipCart(null), new ReverseCart(null), new Draw2Cart(null), new WildDrawCart(), new WildCart()
-    };
+    /*
+    Type of cards:
+            -1)NumericCards
+            0)SkipCards
+            1)ReverseCards
+            2)Draw2Cards
+            3)WildDrawCards
+            4)WildCards
+    */
 
     //this two arrays hold the probability of the next player to not have a certain type of card
-    private int[] rightPlayeTypeCards;
-    private int[] rightPlayeColorCards;
-    private int[] rightPlayeNumericCards;
+    private int[] rightPlayerTypeCards;
+    private int[] rightPlayerColorCards;
+    private int[] rightPlayerNumericCards;
 
     //the closer these numbers are to 1 the better is to play a card with a characteristic of this type
-    private int[] leftPlayeTypeCards;
-    private int[] leftPlayeColorCards;
-    private int[] leftPlayeNumericCards;
+    private int[] leftPlayerTypeCards;
+    private int[] leftPlayerColorCards;
+    private int[] leftPlayerNumericCards;
 
 
     public PcPlayer(String name, ArrayList<Cart> pcPlayersCards){
         super(name, pcPlayersCards);
 
-        rightPlayeTypeCards = new int[5];
-        rightPlayeColorCards = new int[4];
-        leftPlayeNumericCards = new int[10];
+        rightPlayerTypeCards = new int[5];
+        rightPlayerColorCards = new int[4];
+        rightPlayerNumericCards = new int[10];
 
-        leftPlayeTypeCards = new int[5];
-        leftPlayeColorCards = new int[4];
-        leftPlayeNumericCards = new int[10];
+        leftPlayerTypeCards = new int[5];
+        leftPlayerColorCards = new int[4];
+        leftPlayerNumericCards = new int[10];
         for(int i=0 ; i<4 ; i++){
-            rightPlayeColorCards[i]=0;
-            leftPlayeColorCards[i]=0;
+            rightPlayerColorCards[i]=0;
+            leftPlayerColorCards[i]=0;
         }
         for(int i=0; i<5; i++){
-            leftPlayeTypeCards[i]=0;
-            rightPlayeTypeCards[i]=0;
+            leftPlayerTypeCards[i]=0;
+            rightPlayerTypeCards[i]=0;
         }
         for(int i=0; i<10; i++){
-            leftPlayeNumericCards[i]=0;
-            rightPlayeNumericCards[i]=0;
+            leftPlayerNumericCards[i]=0;
+            rightPlayerNumericCards[i]=0;
         }
         //since at the start of the game we dont know anything about the players at first its holds only zero numbers
     }
@@ -101,6 +107,7 @@ public class PcPlayer extends Player{
         return null;
     }
 
+    @Override
     public Cart playWildDrawCart(){
         //this method is a defense method for the player to defend itself against a draw+2 cart
         //and its called only if we are sure that there actually exists a WildDraw+4 cart in his hand, but anyway
@@ -134,7 +141,7 @@ public class PcPlayer extends Player{
                 return -1;
             } else {
                 //has to play a wild kinded cart
-                return choseWildKindedcard(clockWise, numNextPlayersCards);
+                return choseWildKindCard(clockWise, numNextPlayersCards);
             }
         }
         System.out.println();
@@ -184,7 +191,7 @@ public class PcPlayer extends Player{
     }
 
 
-    private int choseWildKindedcard(boolean clockWise, int numNextPlayersCards){
+    private int choseWildKindCard(boolean clockWise, int numNextPlayersCards){
         //this method should choose the index of the wild kinded card choosen card
         if(numWildDrawCards()==0){
             //wild cards
@@ -229,13 +236,13 @@ public class PcPlayer extends Player{
             //not a numeric card
             if (clockWise) {
                 //left player is the next player
-                if (leftPlayeTypeCards[typeCard] > 0) {
+                if (leftPlayerTypeCards[typeCard] > 0) {
                     //the left player doesnt have this type of card
                     answer+=5;
                 }
             } else {
                 //the right player is the next player
-                if (rightPlayeTypeCards[typeCard] > 0) {
+                if (rightPlayerTypeCards[typeCard] > 0) {
                     //the right player doesnt have this type of card
                     answer+=5;
                 }
@@ -244,13 +251,13 @@ public class PcPlayer extends Player{
             //its a numeric card
             if(clockWise){
                 //left player is the next player
-                if(leftPlayeNumericCards[indexNumber]>0){
+                if(leftPlayerNumericCards[indexNumber]>0){
                     //the left player doesnt have this type of card
                     answer+=5;
                 }
             }else{
                 //right player is the next player
-                if(rightPlayeNumericCards[indexNumber]>0){
+                if(rightPlayerNumericCards[indexNumber]>0){
                     //the left player doesnt have this type of card
                     answer+=5;
                 }
@@ -266,12 +273,12 @@ public class PcPlayer extends Player{
             //the color
             if (clockWise) {
                 //the left player is the next player
-                if (leftPlayeColorCards[colorCard] > 0) {
+                if (leftPlayerColorCards[colorCard] > 0) {
                     answer += 5;
                 }
             } else {
                 //the right player is the next player
-                if (rightPlayeColorCards[colorCard] > 0) {
+                if (rightPlayerColorCards[colorCard] > 0) {
                     answer += 5;
                 }
             }
@@ -288,9 +295,9 @@ public class PcPlayer extends Player{
             //if the player has that color better is for that player to chose the base color of the board that color
             choice[i]=getAiColorRepetition(COLOR.getColorByIndex(i));
             if(clockWise) {
-                choice[i] +=leftPlayeColorCards[i];
+                choice[i] +=leftPlayerColorCards[i];
             }else{
-                choice[i] +=rightPlayeColorCards[i];
+                choice[i] +=rightPlayerColorCards[i];
             }
         }
         double max=-1;

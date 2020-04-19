@@ -10,20 +10,18 @@ public class Game {
     private ArrayList<Cart> carts;
     private ArrayList<Player> players;
 
-    private static COLOR baseColorOfGame;
     private COLOR baseColor;
     private boolean clockWise;
 //        System.out.println("\u21BA");   (counter clock wise)
 //        System.out.println("\u21BB");    (clock wise)
 
 
-    public Game(int numPlayers){
+    public Game(int numPlayers, int numPcPlayers){
 
         carts = new ArrayList<>();
             //first we create the Cards
         //Numeric Carts first
         for(int k=0; k<2; k++) {
-            //2 segments with the only difference of the zero numeric cart
             for (int i = k; i<10; i++){
                 //the numbers
                 for(int j=0; j<4; j++){
@@ -31,37 +29,31 @@ public class Game {
                 }
             }
         }
-//        System.out.println("the size of carts in this game after adding the numeric carts is:"+carts.size()+"  (should be 76)");
 
         //now the Skip carts (there are 8 of these carts in the game)
         for(int i=0; i<8; i++){
             carts.add(new SkipCart(COLOR.getColorByIndex(i%4)));
         }
-//        System.out.println("the size of carts in this game after adding the Skip carts is:"+carts.size()+"  (should be 76 + 8 = 84)");
 
         //now the Reverse carts (there are 8 of these carts in the game)
         for(int i=0; i<8; i++){
             carts.add(new ReverseCart(COLOR.getColorByIndex(i%4)));
         }
-//        System.out.println("the size of carts in this game after adding the Reverse carts is:"+carts.size()+"  (should be 76 + 8 +8 = 92)");
 
         //now the Draw +2 carts (there are 8 of these carts in the game)
         for(int i=0; i<8; i++){
             carts.add(new Draw2Cart(COLOR.getColorByIndex(i%4)));
         }
-//        System.out.println("the size of carts in this game after adding the Draw +2 carts is:"+carts.size()+"  (should be 76 + 8 + 8 + 8 = 100)");
 
         //now the Wild carts (there are 4 of these carts in the game)
         for(int i=0; i<4; i++){
             carts.add(new WildCart());
         }
-//        System.out.println("the size of carts in this game after adding the Wild carts is:"+carts.size()+"  (should be 76 + 8 + 8 + 4 = 104)");
 
         //now the Wild Draw +4 carts (there are 4 of these carts in the game)
         for(int i=0; i<8; i++){
             carts.add(new WildDrawCart());
         }
-//        System.out.println("the size of carts in this game after adding the Draw +2 carts is:"+carts.size()+"  (should be 76 + 8 + 8 + 4 + 8 = 112)");
 
         //shuffle the carts
         shuffle();
@@ -80,6 +72,17 @@ public class Game {
             players.add(new Player("Player"+(i+1), firstCartPlayer));
 //            players.add(new Player(""+(i+1), firstCartPlayer));
         }
+
+        for(int i=0; i<numPcPlayers; i++){
+            //number of Pcplayers
+            ArrayList<Cart> firstCartPlayer = new ArrayList<>();
+            for(int j=0; j<7; j++){
+                firstCartPlayer.add(carts.get(j));
+                carts.remove(j);
+            }
+            players.add(new PcPlayer("bot"+(i+1), firstCartPlayer));
+        }
+
         //the last cart in the list should be of type other than Wild cart
 
         if(carts.get(carts.size()-1) instanceof WildDrawCart || carts.get(carts.size()-1) instanceof WildCart){
@@ -131,7 +134,7 @@ public class Game {
         int roundsAdvanced = 1;
         while (true) {
             if (players.get(indexPlayer).numDraw2Carts() == 0) {
-                System.out.println("since the player" + players.get(indexPlayer).getNamePlayer() + " doesnt have any draw+2 carts to defend it self with:\n draw+" + 2 * roundsAdvanced + " carts");
+                System.out.println("player" + players.get(indexPlayer).getNamePlayer() + " doesnt have any draw+2 carts\n draw+" + 2 * roundsAdvanced + " carts");
                 for (int i = 0; i < 2 * roundsAdvanced; i++) {
                     players.get(indexPlayer).addCart(carts.get(0));
                     carts.remove(0);
@@ -140,7 +143,12 @@ public class Game {
             }
 
             //player has Draw +2 carts available to play with
-            Cart newCart = players.get(indexPlayer).playDraw2Cart();
+            Cart newCart;
+            if(players.get(indexPlayer) instanceof PcPlayer){
+                newCart =((PcPlayer) players.get(indexPlayer)).playDraw2Cart();
+            }else{
+                newCart = players.get(indexPlayer).playDraw2Cart();
+            }
             newCart.printCart();
             //we are sure that the cart newCart is a draw +2 cart
             roundsAdvanced++;
@@ -194,16 +202,33 @@ public class Game {
 
     private void wildCardRunAI(int indexPcPlayer){
         baseColor = ((PcPlayer)players.get(indexPcPlayer)).getColorAi(clockWise);
+        System.out.println("the chosen color by The player "+ players.get(indexPcPlayer).getNamePlayer()+" is "+COLOR.getColor(baseColor)+baseColor.name()+"\033[0m");
         return;
     }
 
     private int miniRunWildDrawCart(int indexPlayer){
         //so that the color in the center is updated
         int advanced=1;
+        int indexBefore;
         while (true) {
-            miniWildCartRun();
+            if(clockWise){
+                indexBefore=indexPlayer-1;
+                if(indexBefore==-1){
+                    indexBefore=players.size()-1;
+                }
+            }else{
+                indexBefore=indexPlayer+1;
+                if(indexBefore==players.size()){
+                    indexBefore=0;
+                }
+            }
+            if(players.get(indexBefore) instanceof PcPlayer){
+                wildCardRunAI(indexBefore);
+            }else {
+                miniWildCartRun();
+            }
             if (players.get(indexPlayer).numWildDrawCarts() == 0) {
-                System.out.println("since the player" + players.get(indexPlayer).getNamePlayer() + " doesnt have any Wild Draw+4 carts to defend it self with:\n has to draw+" + 4 * advanced + " carts");
+                System.out.println("since the player " + players.get(indexPlayer).getNamePlayer() + " doesnt have any Wild Draw+4 carts\n has to draw+" + (4 * advanced ) + " carts");
                 for (int i = 0; i < 4 * advanced; i++) {
                     players.get(indexPlayer).addCart(carts.get(0));
                     carts.remove(0);
@@ -212,7 +237,12 @@ public class Game {
             }
 
             //player has Wild Draw +4 carts available to play with
-            Cart newCart = players.get(indexPlayer).playWildDrawCart();
+            Cart newCart;
+            if(players.get(indexPlayer) instanceof PcPlayer){
+                newCart = ((PcPlayer)players.get(indexPlayer)).playWildDrawCart();
+            }else {
+                newCart = players.get(indexPlayer).playWildDrawCart();
+            }
             newCart.printCart();
             //we are sure that the cart newCart is a draw +2 cart
             advanced++;
@@ -313,7 +343,7 @@ public class Game {
 //        printEndGame();
         int indexPlayerInTurn = (new Random()).nextInt(players.size());
         System.out.println("the game begins with the player number "+(indexPlayerInTurn+1)+" name of player:  "+players.get(indexPlayerInTurn).getNamePlayer());
-        Cart lastCart=getLastCart();
+        Cart lastCart = getLastCart();
         //first we print the cart in the center
 //        printRoundInfo();
         //first round:
@@ -350,23 +380,32 @@ public class Game {
             }
 
             System.out.println("Turn of "+ players.get(indexPlayerInTurn).getNamePlayer());
-            Cart newCart = players.get(indexPlayerInTurn).playCart(lastCart);
+            Cart newCart;
+            if(players.get(indexPlayerInTurn) instanceof PcPlayer){
+                newCart = ((PcPlayer) players.get(indexPlayerInTurn)).aiPlayCart(lastCart, clockWise, getNumberCardsNextPlayer(indexPlayerInTurn));
+            }else{
+                newCart = players.get(indexPlayerInTurn).playCart(lastCart);
+            }
             boolean cartPlayed = false;
 
             if(newCart == null){
                 players.get(indexPlayerInTurn).addCart(carts.get(0));
                 carts.remove(0);
-                newCart = players.get(indexPlayerInTurn).playCart(lastCart);
+                if(players.get(indexPlayerInTurn) instanceof PcPlayer){
+                    newCart = ((PcPlayer) players.get(indexPlayerInTurn)).aiPlayCart(lastCart, clockWise, getNumberCardsNextPlayer(indexPlayerInTurn));
+                }else {
+                    newCart = players.get(indexPlayerInTurn).playCart(lastCart);
+                }
                 if(newCart == null){
                     System.out.println("No carts available for player "+ players.get(indexPlayerInTurn).getNamePlayer()+" to play");
                 }else{
-                    System.out.println("the cart you played:");
+                    System.out.println("the cart "+players.get(indexPlayerInTurn).getNamePlayer()+"played:");
                     newCart.printCart();
                     carts.add(newCart);
                     cartPlayed = true;
                 }
             }else{
-                System.out.println("the cart you played:");
+                System.out.println("the cart "+players.get(indexPlayerInTurn).getNamePlayer()+" played:");
                 newCart.printCart();
                 carts.add(newCart);
                 cartPlayed = true;
@@ -406,9 +445,13 @@ public class Game {
                             indexPlayerInTurn=players.size()-1;
                         }
                     }
-                    System.out.println("the player " + players.get(indexPlayerInTurn).getNamePlayer() +" lost his/her turn");
+                    System.out.println("the player " + players.get(indexPlayerInTurn).getNamePlayer() +" lost turn");
                 }else if(newCart instanceof WildCart){
-                    miniWildCartRun();
+                    if(players.get(indexPlayerInTurn) instanceof PcPlayer){
+                        wildCardRunAI(indexPlayerInTurn);
+                    }else {
+                        miniWildCartRun();
+                    }
                 }else if(newCart instanceof WildDrawCart){
                     if(clockWise){
                         int advance = miniRunWildDrawCart((indexPlayerInTurn+1)%players.size());
@@ -442,6 +485,19 @@ public class Game {
             }
 
         }
+    }
+
+    private int getNumberCardsNextPlayer(int indexPlayer){
+        if(clockWise){
+            indexPlayer++;
+            indexPlayer=indexPlayer%players.size();
+        }else{
+            indexPlayer--;
+            if(indexPlayer==-1){
+                indexPlayer=players.size()-1;
+            }
+        }
+        return players.get(indexPlayer).getNumberCartsLeft();
     }
 
     private void printEndGame(){
