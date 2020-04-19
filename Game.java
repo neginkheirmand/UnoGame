@@ -10,7 +10,7 @@ public class Game {
     private ArrayList<Cart> carts;
     private ArrayList<Player> players;
 
-    private COLOR baseColor;
+    private static COLOR baseColor;
     private boolean clockWise;
 //        System.out.println("\u21BA");   (counter clock wise)
 //        System.out.println("\u21BB");    (clock wise)
@@ -107,12 +107,16 @@ public class Game {
         return;
     }
 
+    public static COLOR getBaseColor(){
+        return baseColor;
+    }
+
     private void reverseRotation(){
         clockWise=!clockWise;
         return;
     }
 
-    public Cart getLastCart() {
+    private Cart getLastCart() {
         if (carts.size() != 0) {
             return carts.get(carts.size() - 1);
         }else{
@@ -121,6 +125,27 @@ public class Game {
 
             return null;
         }
+    }
+
+    private void updateInfoPcPlayer(int indexPlayer, Cart lastCart, boolean lastPlayed){
+        if(players.get(  (indexPlayer+1)%players.size()) instanceof PcPlayer){
+            ((PcPlayer) players.get(  (indexPlayer+1)%players.size())).updateInfoRight(lastCart, lastPlayed);
+        }
+        if(players.get( (players.size() + (indexPlayer-1))%players.size()) instanceof PcPlayer){
+            ((PcPlayer) players.get((players.size() + (indexPlayer-1))%players.size())).updateInfoLeft(lastCart, lastPlayed);
+        }
+        return;
+    }
+
+    //we only call this method when the number of cards of the player is increased
+    private void updateInfoAIAfterAddCart(int indexPlayer){
+        if(players.get(  (indexPlayer+1)%players.size()) instanceof PcPlayer){
+            ((PcPlayer) players.get(  (indexPlayer+1)%players.size())).addedCardToRightPlayer();
+        }
+        if(players.get( (players.size() + (indexPlayer-1))%players.size()) instanceof PcPlayer){
+            ((PcPlayer) players.get((players.size() + (indexPlayer-1))%players.size())).addedCardToLeftPlayer();
+        }
+        return;
     }
 
     /**
@@ -135,6 +160,8 @@ public class Game {
         while (true) {
             if (players.get(indexPlayer).numDraw2Carts() == 0) {
                 System.out.println("player" + players.get(indexPlayer).getNamePlayer() + " doesnt have any draw+2 carts\n draw+" + 2 * roundsAdvanced + " carts");
+                //since the second argument doesnt matter if the card played is not a Wild card
+                updateInfoPcPlayer(indexPlayer, getLastCart(), true);
                 for (int i = 0; i < 2 * roundsAdvanced; i++) {
                     players.get(indexPlayer).addCart(carts.get(0));
                     carts.remove(0);
@@ -229,6 +256,10 @@ public class Game {
             }
             if (players.get(indexPlayer).numWildDrawCarts() == 0) {
                 System.out.println("since the player " + players.get(indexPlayer).getNamePlayer() + " doesnt have any Wild Draw+4 carts\n has to draw+" + (4 * advanced ) + " carts");
+                //updateInfoPcPlayer( indexPlayer, getLastCart(), true);
+                //we dont need to add the information that this player doesnt have any Wild card cause after this, will get 4*advance card more and
+                //probably will get one
+                updateInfoAIAfterAddCart(indexPlayer);
                 for (int i = 0; i < 4 * advanced; i++) {
                     players.get(indexPlayer).addCart(carts.get(0));
                     carts.remove(0);
@@ -397,6 +428,9 @@ public class Game {
                     newCart = players.get(indexPlayerInTurn).playCart(lastCart);
                 }
                 if(newCart == null){
+                    //every information we have should be deleted
+                    updateInfoAIAfterAddCart(indexPlayerInTurn);
+                    updateInfoPcPlayer(indexPlayerInTurn, getLastCart(), false);
                     System.out.println("No carts available for player "+ players.get(indexPlayerInTurn).getNamePlayer()+" to play");
                 }else{
                     System.out.println("the cart "+players.get(indexPlayerInTurn).getNamePlayer()+"played:");
@@ -447,6 +481,9 @@ public class Game {
                     }
                     System.out.println("the player " + players.get(indexPlayerInTurn).getNamePlayer() +" lost turn");
                 }else if(newCart instanceof WildCart){
+                    //since we can only use this kind of card when we dont have any other card with the given characteristics of the one the center
+                    //means that the player with index: indexPlayerInTurn
+                    updateInfoPcPlayer(indexPlayerInTurn, getLastCart());
                     if(players.get(indexPlayerInTurn) instanceof PcPlayer){
                         wildCardRunAI(indexPlayerInTurn);
                     }else {
@@ -750,6 +787,9 @@ public class Game {
     private void printAllPlayersCarts(){
         for(int i=0; i<players.size(); i++){
             System.out.println("Player number "+(i+1)+"s carts:");
+            if(players.get(i).getNumberCartsLeft()==0){
+                System.out.println("the Player "+players.get(i).getNamePlayer()+" Won the game-has no cards left-");
+            }
             players.get(i).printCarts(new Cart(10, COLOR.BLUE));
         }
         System.out.println();

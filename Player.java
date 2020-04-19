@@ -52,6 +52,7 @@ public class Player {
         if(numDraw2Carts() == 0){
             return null;
         }
+        System.out.println("\nyou can answer with a Draw+2 cart, which one do you want to play:");
         int numDraw2Cart = chooseDraw2Cart();
         Cart temp = getDraw2CartByNum(numDraw2Cart);
         for (int i=0; i<playersCarts.size(); i++){
@@ -143,7 +144,7 @@ public class Player {
         for (int i = 0; i < numberOfDraw2Carts; i++) {
             System.out.printf("     " + (i+1) + "     ");
         }
-
+        System.out.println();
         int choice = (new Scanner(System.in). nextInt());
         while(choice<1||choice>numberOfDraw2Carts){
             System.out.printf("Please enter a valid number");
