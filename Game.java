@@ -12,9 +12,6 @@ public class Game {
 
     private static COLOR baseColor;
     private boolean clockWise;
-//        System.out.println("\u21BA");   (counter clock wise)
-//        System.out.println("\u21BB");    (clock wise)
-
 
     public Game(int numPlayers, int numPcPlayers){
 
@@ -69,8 +66,7 @@ public class Game {
                 firstCartPlayer.add(carts.get(j));
                 carts.remove(j);
             }
-            players.add(new Player("Player"+(i+1), firstCartPlayer));
-//            players.add(new Player(""+(i+1), firstCartPlayer));
+            players.add(new Player(inputNamePlayer(i+1), firstCartPlayer));
         }
 
         for(int i=0; i<numPcPlayers; i++){
@@ -100,6 +96,12 @@ public class Game {
         baseColor = carts.get(0).getColor();
         run();
 
+    }
+
+    private String inputNamePlayer(int number){
+        System.out.println("Please enter yout name Player "+number);
+        String namePlayer = (new Scanner(System.in)).next();
+        return namePlayer;
     }
 
     private void shuffle(){
