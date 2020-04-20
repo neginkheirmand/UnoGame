@@ -778,13 +778,12 @@ public class Game {
                 max = players.get(1).getNamePlayer().length();
             }
             System.out.printf("//");
-            for(int i=0; i<max+221
-                    ; i++){
+            for(int i=0; i<max+3; i++){
                 System.out.printf(" ");
             }
             System.out.println("\\\\");
             System.out.printf(players.get(0).getNamePlayer());
-            for(int i=0; i<max+3; i++){
+            for(int i=0; i<max+4; i++){
                 if(i-2==max/2){
                     System.out.printf(rotationUniCode);
                 }

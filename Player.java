@@ -200,6 +200,11 @@ public class Player {
         return choice;
     }
 
+    /**
+     * this method returns the number of playable cards (not counting the wild and wild draw ones)
+     * @param lastPlayedCart the last played card in the game
+     * @return the number of playable cards
+     */
     public int numPlayableNormalCarts(Cart lastPlayedCart){
         //this method is public because it will be ussed in the Game Class for the miniRun method
         int canPlayNum = 0;
@@ -214,6 +219,10 @@ public class Player {
         return canPlayNum;
     }
 
+    /**
+     * this method returns the number of draw+2 cards
+     * @return the number of Draw+2 cards
+     */
     public int numDraw2Carts(){
         int num =0;
         for(int i=0; i<playersCarts.size(); i++){
@@ -224,6 +233,10 @@ public class Player {
         return num;
     }
 
+    /**
+     * this method returns the number of Wild cards
+     * @return the number of wild cards
+     */
     private int numWildKindedCarts(){
         int wildCarts = 0;
         for(int i=0; i<playersCarts.size(); i++){
@@ -234,6 +247,10 @@ public class Player {
         return wildCarts;
     }
 
+    /**
+     * this method returns the number of wild draw cards
+     * @return the number of wild Draw+4 cards
+     */
     public int numWildDrawCarts(){
         int num=0;
         for(int i=0; i<playersCarts.size(); i++){
@@ -244,6 +261,10 @@ public class Player {
         return num;
     }
 
+    /**
+     * method for printing the carts of the player
+     * @param lastPlayedCart the last played card in the center of the game board
+     */
     public void printCarts(Cart lastPlayedCart){
 
         int numHandCarts = playersCarts.size();
@@ -342,6 +363,11 @@ public class Player {
         return;
     }
 
+    /**
+     * this method is called when is this players turn to play
+     * @param lastPlayedCart the last played card in the center of the game
+     * @return the index of the chosen card in the array list of this players card
+     */
     private int chose(Cart lastPlayedCart) {
         //we have to make sure that this player has at least one cart in his/her hands
         int canPlayNum = numPlayableNormalCarts(lastPlayedCart);
@@ -389,6 +415,13 @@ public class Player {
         }
     }
 
+    /**
+     * method for searching in a given array -with the given size- and find out if a passed parameter exist in that array
+     * @param container the array
+     * @param size the size of the array
+     * @param input the specified parameter
+     * @return boolean containing the answer
+     */
     private boolean existsInArr(int [] container, int size, int input){
         for(int i=0; i<size; i++){
             if(container[i]==input){
@@ -398,10 +431,17 @@ public class Player {
         return false;
     }
 
+    /**
+     * @return the size of the array list containig all the cards of the player
+     */
     public int numberOfCarts(){
         return playersCarts.size();
     }
 
+    /**
+     * getter method for the name field of this class
+     * @return the name of the player
+     */
     public String getNamePlayer(){
         return namePlayer;
     }
