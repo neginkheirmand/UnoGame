@@ -127,12 +127,12 @@ public class Game {
         }
     }
 
-    private void updateInfoPcPlayer(int indexPlayer, Cart lastCart, boolean lastPlayed){
+    private void updateInfoPcPlayer(int indexPlayer, Cart lastCart, boolean lastPlayed, boolean hasWild){
         if(players.get(  (indexPlayer+1)%players.size()) instanceof PcPlayer){
-            ((PcPlayer) players.get(  (indexPlayer+1)%players.size())).updateInfoRight(lastCart, lastPlayed);
+            ((PcPlayer) players.get(  (indexPlayer+1)%players.size())).updateInfoRight(lastCart, lastPlayed, hasWild);
         }
         if(players.get( (players.size() + (indexPlayer-1))%players.size()) instanceof PcPlayer){
-            ((PcPlayer) players.get((players.size() + (indexPlayer-1))%players.size())).updateInfoLeft(lastCart, lastPlayed);
+            ((PcPlayer) players.get((players.size() + (indexPlayer-1))%players.size())).updateInfoLeft(lastCart, lastPlayed, hasWild);
         }
         return;
     }
@@ -160,12 +160,13 @@ public class Game {
         while (true) {
             if (players.get(indexPlayer).numDraw2Carts() == 0) {
                 System.out.println("player" + players.get(indexPlayer).getNamePlayer() + " doesnt have any draw+2 carts\n draw+" + 2 * roundsAdvanced + " carts");
-                //since the second argument doesnt matter if the card played is not a Wild card
-                updateInfoPcPlayer(indexPlayer, getLastCart(), true);
+                //now we know at this point this player doesnt have any Draw+2 cards in his hands but after this will add 2 * advanced cards to his hands so we cant be
+                //sure any more
                 for (int i = 0; i < 2 * roundsAdvanced; i++) {
                     players.get(indexPlayer).addCart(carts.get(0));
                     carts.remove(0);
                 }
+                updateInfoAIAfterAddCart(indexPlayer);
                 return roundsAdvanced;
             }
 
@@ -430,7 +431,7 @@ public class Game {
                 if(newCart == null){
                     //every information we have should be deleted
                     updateInfoAIAfterAddCart(indexPlayerInTurn);
-                    updateInfoPcPlayer(indexPlayerInTurn, getLastCart(), false);
+                    updateInfoPcPlayer(indexPlayerInTurn, getLastCart(), false, false);
                     System.out.println("No carts available for player "+ players.get(indexPlayerInTurn).getNamePlayer()+" to play");
                 }else{
                     System.out.println("the cart "+players.get(indexPlayerInTurn).getNamePlayer()+"played:");
@@ -482,14 +483,17 @@ public class Game {
                     System.out.println("the player " + players.get(indexPlayerInTurn).getNamePlayer() +" lost turn");
                 }else if(newCart instanceof WildCart){
                     //since we can only use this kind of card when we dont have any other card with the given characteristics of the one the center
-                    //means that the player with index: indexPlayerInTurn
-                    updateInfoPcPlayer(indexPlayerInTurn, getLastCart());
+                    //means that the player with index: indexPlayerInTurn doesnt have any cards
+                    updateInfoPcPlayer(indexPlayerInTurn, carts.get(carts.size()-2), false, true);
                     if(players.get(indexPlayerInTurn) instanceof PcPlayer){
                         wildCardRunAI(indexPlayerInTurn);
                     }else {
                         miniWildCartRun();
                     }
+
+
                 }else if(newCart instanceof WildDrawCart){
+                    updateInfoPcPlayer(indexPlayerInTurn, carts.get(carts.size()-2), false, true);
                     if(clockWise){
                         int advance = miniRunWildDrawCart((indexPlayerInTurn+1)%players.size());
                         indexPlayerInTurn += advance;

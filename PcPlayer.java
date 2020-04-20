@@ -81,6 +81,8 @@ public class PcPlayer extends Player{
     public Cart aiPlayCart(Cart lastCartPlayed, boolean clockWise, int numNextPlayersCards){
         System.out.println("the "+namePlayer+" carts:");
         printCarts(lastCartPlayed);
+        System.out.println("info ai:");
+        printInfoAi();
         int chosenCart=aiChose(lastCartPlayed, clockWise, numNextPlayersCards);
         if(chosenCart==-1){
             //no carts available to play
@@ -288,46 +290,55 @@ public class PcPlayer extends Player{
         }
     }
 
-    public void updateInfoRight(Cart lastCard, boolean lastPlayed){
+    public void updateInfoRight(Cart lastCard, boolean lastPlayed, boolean hasWild){
         //when a player doesn't have anything to play after a cart means that player doesn't have that Type of card and that color and doesn't have Wild kind cards either
         if(lastCard instanceof Draw2Cart){
             //doesnt have that type of card
             rightPlayerTypeCards[2]=1;
-            //doesnt have any wild kind card
-            rightPlayerTypeCards[3]=1;
-            rightPlayerTypeCards[4]=1;
+            if(!hasWild) {
+                //doesnt have any wild kind card
+                rightPlayerTypeCards[3] = 1;
+                rightPlayerTypeCards[4] = 1;
+            }
             rightPlayerColorCards[lastCard.getColor().ordinal()]=1;
         }else if(lastCard instanceof NumericCart){
             rightPlayerNumericCards[((NumericCart) lastCard).getNumber()]=1;
-            //doesnt have any wild kind card
-            rightPlayerTypeCards[3]=1;
-            rightPlayerTypeCards[4]=1;
+            if(!hasWild) {
+                //doesnt have any wild kind card
+                rightPlayerTypeCards[3] = 1;
+                rightPlayerTypeCards[4] = 1;
+            }
             rightPlayerColorCards[lastCard.getColor().ordinal()]=1;
         }else if(lastCard instanceof ReverseCart){
             rightPlayerTypeCards[1]=1;
-            //doesnt have any wild kind card
-            rightPlayerTypeCards[3]=1;
-            rightPlayerTypeCards[4]=1;
+            if(!hasWild) {
+                //doesnt have any wild kind card
+                rightPlayerTypeCards[3] = 1;
+                rightPlayerTypeCards[4] = 1;
+            }
             rightPlayerColorCards[lastCard.getColor().ordinal()]=1;
-        }else if(lastCard instanceof WildDrawCart || lastCard instanceof WildCart){
-            //doesnt have any wild kind card
-            rightPlayerTypeCards[3]=1;
-            rightPlayerTypeCards[4]=1;
-
         }else if(lastCard instanceof SkipCart){
             //the second player after the one who played the skip card
             rightPlayerTypeCards[0]=1;
-            //doesnt have any wild kind card
-            rightPlayerTypeCards[3]=1;
-            rightPlayerTypeCards[4]=1;
+            if(!hasWild) {
+                //doesnt have any wild kind card
+                rightPlayerTypeCards[3] = 1;
+                rightPlayerTypeCards[4] = 1;
+            }
             rightPlayerColorCards[lastCard.getColor().ordinal()]=1;
         }else if(lastCard instanceof WildCart){
-            rightPlayerTypeCards[3]=1;
-            rightPlayerTypeCards[4]=1;
+            if(!hasWild) {
+                //doesnt have any wild kind card
+                rightPlayerTypeCards[3] = 1;
+                rightPlayerTypeCards[4] = 1;
+            }
             rightPlayerColorCards[Game.getBaseColor().ordinal()]=1;
         }else if(lastCard instanceof WildDrawCart) {
-            rightPlayerTypeCards[3] = 1;
-            rightPlayerTypeCards[4] = 1;
+            if(!hasWild) {
+                //doesnt have any wild kind card
+                rightPlayerTypeCards[3] = 1;
+                rightPlayerTypeCards[4] = 1;
+            }
             //the next statement is only for the second player after the one who played
             if (!lastPlayed){
                 rightPlayerColorCards[Game.getBaseColor().ordinal()] = 1;
@@ -348,7 +359,7 @@ public class PcPlayer extends Player{
 
         for(int i=0; i<10; i++){
             if(leftPlayerNumericCards[i]==1){
-                System.out.println(leftPlayerNumericCards[i]+" crads");
+                System.out.println(i+" crads");
             }
         }
 
@@ -396,46 +407,55 @@ public class PcPlayer extends Player{
 
     }
 
-    public void updateInfoLeft(Cart lastCard, boolean lastPlayed){
+    public void updateInfoLeft(Cart lastCard, boolean lastPlayed, boolean hasWild){
         //when a player doesn't have anything to play after a cart means that player doesn't have that Type of card and that color and doesn't have Wild kind cards either
         if(lastCard instanceof Draw2Cart){
             //doesnt have that type of card
             leftPlayerTypeCards[2]=1;
-            //doesnt have any wild kind card
-            leftPlayerTypeCards[3]=1;
-            leftPlayerTypeCards[4]=1;
+            if(hasWild==false) {
+                //doesnt have any wild kind card
+                leftPlayerTypeCards[3] = 1;
+                leftPlayerTypeCards[4] = 1;
+            }
             leftPlayerColorCards[lastCard.getColor().ordinal()]=1;
         }else if(lastCard instanceof NumericCart){
             leftPlayerNumericCards[((NumericCart) lastCard).getNumber()]=1;
-            //doesnt have any wild kind card
-            leftPlayerTypeCards[3]=1;
-            leftPlayerTypeCards[4]=1;
+            if(hasWild==false) {
+                //doesnt have any wild kind card
+                leftPlayerTypeCards[3] = 1;
+                leftPlayerTypeCards[4] = 1;
+            }
             leftPlayerColorCards[lastCard.getColor().ordinal()]=1;
         }else if(lastCard instanceof ReverseCart){
             leftPlayerTypeCards[1]=1;
-            //doesnt have any wild kind card
-            leftPlayerTypeCards[3]=1;
-            leftPlayerTypeCards[4]=1;
+            if(hasWild==false) {
+                //doesnt have any wild kind card
+                leftPlayerTypeCards[3] = 1;
+                leftPlayerTypeCards[4] = 1;
+            }
             leftPlayerColorCards[lastCard.getColor().ordinal()]=1;
-        }else if(lastCard instanceof WildDrawCart || lastCard instanceof WildCart){
-            //doesnt have any wild kind card
-            leftPlayerTypeCards[3]=1;
-            leftPlayerTypeCards[4]=1;
-
         }else if(lastCard instanceof SkipCart){
             //the second player after the one who played the skip card
             leftPlayerTypeCards[0]=1;
-            //doesnt have any wild kind card
-            leftPlayerTypeCards[3]=1;
-            leftPlayerTypeCards[4]=1;
+            if(hasWild==false) {
+                //doesnt have any wild kind card
+                leftPlayerTypeCards[3] = 1;
+                leftPlayerTypeCards[4] = 1;
+            }
             leftPlayerColorCards[lastCard.getColor().ordinal()]=1;
         }else if(lastCard instanceof WildCart){
-            leftPlayerTypeCards[3]=1;
-            leftPlayerTypeCards[4]=1;
+            if(hasWild==false) {
+                //doesnt have any wild kind card
+                leftPlayerTypeCards[3] = 1;
+                leftPlayerTypeCards[4] = 1;
+            }
             leftPlayerColorCards[Game.getBaseColor().ordinal()]=1;
         }else if(lastCard instanceof WildDrawCart) {
-            leftPlayerTypeCards[3] = 1;
-            leftPlayerTypeCards[4] = 1;
+            if(hasWild==false) {
+                //doesnt have any wild kind card
+                leftPlayerTypeCards[3] = 1;
+                leftPlayerTypeCards[4] = 1;
+            }
             //the next statement is only for the second player after the one who played
             if (!lastPlayed){
                 leftPlayerColorCards[Game.getBaseColor().ordinal()] = 1;
@@ -496,6 +516,9 @@ public class PcPlayer extends Player{
         double num = 0;
         double total = (double) playersCarts.size();
         for(int i=0; i<playersCarts.size(); i++){
+            if(playersCarts.get(i) instanceof WildDrawCart || playersCarts.get(i) instanceof WildCart){
+                continue;
+            }
             if(playersCarts.get(i).getColor().equals(color)){
                 num++;
             }
