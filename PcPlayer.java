@@ -3,6 +3,7 @@ package ir.ac.aut;
 import java.util.ArrayList;
 
 public class PcPlayer extends Player{
+    //the Color array which contains the index of every color
     private static COLOR[] nextPlayersColor={
         COLOR.RED, COLOR.BLUE, COLOR.YELLOW, COLOR.GREEN
     };
@@ -16,17 +17,25 @@ public class PcPlayer extends Player{
             4)WildCards
     */
 
-    //this two arrays hold the probability of the next player to not have a certain type of card
+    //if a house of this array is 1 means that the right player of this PCPlayer doesn't have the specified Type of card
     private int[] rightPlayerTypeCards;
+    //if a house of this array is 1 means that the right player of this PCPlayer doesn't have the specified Color of card
     private int[] rightPlayerColorCards;
+    //if a house of this array is 1 means that the right player of this PCPlayer doesn't have the specified number of card (between numeric cards
     private int[] rightPlayerNumericCards;
 
-    //the closer these numbers are to 1 the better is to play a card with a characteristic of this type
+    //if a house of this array is 1 means that the left player of this PCPlayer doesn't have the specified  Type of card
     private int[] leftPlayerTypeCards;
+    //if a house of this array is 1 means that the left player of this PCPlayer doesn't have the specified  Color of card
     private int[] leftPlayerColorCards;
+    //if a house of this array is 1 means that the left player of this PCPlayer doesn't have the specified number of card (between numeric cards
     private int[] leftPlayerNumericCards;
 
-
+    /**
+     * the consturctor of this class
+     * @param name the name of the player
+     * @param pcPlayersCards the array list containing the cards of this PCPlayer
+     */
     public PcPlayer(String name, ArrayList<Cart> pcPlayersCards){
         super(name, pcPlayersCards);
 
@@ -52,6 +61,10 @@ public class PcPlayer extends Player{
         //since at the start of the game we dont know anything about the players at first its holds only zero numbers
     }
 
+    /**
+     * a function that returns the number of wild Cards
+     * @return
+     */
     private int numWildCards(){
         int wildCarts = 0;
         for(int i=0; i<playersCarts.size(); i++){
@@ -62,6 +75,10 @@ public class PcPlayer extends Player{
         return wildCarts;
     }
 
+    /**
+     * a method to get the number of Wild Draw crads
+     * @return number of wild draw cards
+     */
     private int numWildDrawCards(){
         int wildCarts = 0;
         for(int i=0; i<playersCarts.size(); i++){
@@ -82,7 +99,6 @@ public class PcPlayer extends Player{
         System.out.println("the "+namePlayer+" carts:");
         printCarts(lastCartPlayed);
         System.out.println("info ai:");
-        printInfoAi();
         int chosenCart=aiChose(lastCartPlayed, clockWise, numNextPlayersCards);
         if(chosenCart==-1){
             //no carts available to play
@@ -94,6 +110,10 @@ public class PcPlayer extends Player{
         }
     }
 
+    /**
+     * this is the ai method which using the information plays a draw+2 card
+     * @return
+     */
     @Override
     public Cart playDraw2Cart(){
         //this method is a defense method for the player to defend itself against a draw+2 cart
@@ -111,6 +131,10 @@ public class PcPlayer extends Player{
         return null;
     }
 
+    /**
+     * this method is for this player to play with specifically WildDraw cards
+     * @return
+     */
     @Override
     public Cart playWildDrawCart(){
         //this method is a defense method for the player to defend itself against a draw+2 cart
@@ -131,7 +155,7 @@ public class PcPlayer extends Player{
 
 
     /**
-     * this
+     * this is the main ai method for choosing the next card
      * @param lastPlayedCart
      * @param clockWise
      * @return
@@ -145,7 +169,7 @@ public class PcPlayer extends Player{
                 return -1;
             } else {
                 //has to play a wild kinded cart
-                return choseWildKindCard(clockWise, numNextPlayersCards);
+                return choseWildKindCard( numNextPlayersCards);
             }
         }
         System.out.println();
@@ -194,8 +218,12 @@ public class PcPlayer extends Player{
         return container[indexMaxPoint];
     }
 
-
-    private int choseWildKindCard(boolean clockWise, int numNextPlayersCards){
+    /**
+     *  a method to choose a wild kind card if available in case you cannot play any other card of your hand
+     * @param numNextPlayersCards the number of the next players cards
+     * @return
+     */
+    private int choseWildKindCard(int numNextPlayersCards){
         //this method should choose the index of the wild kinded card choosen card
         if(numWildDrawCards()==0){
             //wild cards
@@ -231,7 +259,14 @@ public class PcPlayer extends Player{
         return -1;
     }
 
-    //this method will return a number(0, 5, 10) : the probability of not having a card
+    /**
+     * the probability of the next player to not have a card(Type, color, number-if numeric)
+     * @param clockWise kind of rotation in the game
+     * @param typeCard the type of card
+     * @param colorCard the color of the card played
+     * @param indexNumber the number -in case its a numeric card-
+     * @return this method will return a number(0, 5, 10) : the probability of not having a card
+     */
     private int probabilityNextPlayer(boolean clockWise, int typeCard, int colorCard, int indexNumber){
         int answer =0;
 
@@ -290,6 +325,12 @@ public class PcPlayer extends Player{
         }
     }
 
+    /**
+     * a method for updating the information about the right player
+     * @param lastCard the last played card
+     * @param lastPlayed a boolean to specify if the last player played a card
+     * @param hasWild a boolean to specify if the player has wild kind card
+     */
     public void updateInfoRight(Cart lastCard, boolean lastPlayed, boolean hasWild){
         //when a player doesn't have anything to play after a cart means that player doesn't have that Type of card and that color and doesn't have Wild kind cards either
         if(lastCard instanceof Draw2Cart){
@@ -347,66 +388,12 @@ public class PcPlayer extends Player{
         return;
     }
 
-    public void printInfoAi(){
-        System.out.println("in the left we have some who doesnt have: ");
-        //the color:
-        for(int i=0; i<4; i++){
-            if(leftPlayerColorCards[i]==1){
-                System.out.println(COLOR.getColorByIndex(i).name()+"Color");
-            }
-        }
-        System.out.println("Numeros:");
-
-        for(int i=0; i<10; i++){
-            if(leftPlayerNumericCards[i]==1){
-                System.out.println(i+" crads");
-            }
-        }
-
-        System.out.println("Types:");
-        if(leftPlayerTypeCards[0]==1){
-            System.out.println("Skip card");
-        }else if(leftPlayerTypeCards[1]==1){
-            System.out.println("Reveresi card");
-        }else if(leftPlayerTypeCards[2]==1){
-            System.out.println("Draw+2 card");
-        }else if(leftPlayerTypeCards[3]==1){
-            System.out.println("Wild Draw Card");
-        }else if(leftPlayerTypeCards[4]==1){
-            System.out.println("Wild Card");
-        }
-
-
-        System.out.println("in the right we have some who doesnt have: ");
-        //the color:
-        for(int i=0; i<4; i++){
-            if(rightPlayerColorCards[i]==1){
-                System.out.println(COLOR.getColorByIndex(i).name()+"Color");
-            }
-        }
-        System.out.println("Numeros:");
-
-        for(int i=0; i<10; i++){
-            if(rightPlayerNumericCards[i]==1){
-                System.out.println(rightPlayerNumericCards[i]+" crads");
-            }
-        }
-
-        System.out.println("Types:");
-        if(rightPlayerTypeCards[0]==1){
-            System.out.println("Skip card");
-        }else if(rightPlayerTypeCards[1]==1){
-            System.out.println("Reveresi card");
-        }else if(rightPlayerTypeCards[2]==1){
-            System.out.println("Draw+2 card");
-        }else if(rightPlayerTypeCards[3]==1){
-            System.out.println("Wild Draw Card");
-        }else if(rightPlayerTypeCards[4]==1){
-            System.out.println("Wild Card");
-        }
-
-    }
-
+    /**
+     * a method for updating the information about the left player
+     * @param lastCard the last played card
+     * @param lastPlayed a boolean to specify if the last player played a card
+     * @param hasWild a boolean to specify if the player has wild kind card
+     */
     public void updateInfoLeft(Cart lastCard, boolean lastPlayed, boolean hasWild){
         //when a player doesn't have anything to play after a cart means that player doesn't have that Type of card and that color and doesn't have Wild kind cards either
         if(lastCard instanceof Draw2Cart){
@@ -464,6 +451,10 @@ public class PcPlayer extends Player{
         return;
     }
 
+    /**
+     * a method for deleting all the info about a player because the specified player has new cards in his hands
+     * for the right player
+     */
     public void addedCardToRightPlayer(){
         for(int i=0; i<4; i++){
             rightPlayerColorCards[i]=0;
@@ -476,6 +467,10 @@ public class PcPlayer extends Player{
         }
     }
 
+    /**
+     * a method for deleting all the info about a player because the specified player has new cards in his hands
+     * for the left player
+     */
     public void addedCardToLeftPlayer(){
         for(int i=0; i<4; i++){
             leftPlayerColorCards[i]=0;
@@ -488,7 +483,11 @@ public class PcPlayer extends Player{
         }
     }
 
-    //for after playing a wild kinded cart
+    /**
+     * a method to choose the color of the board after playing a wild card
+     * @param clockWise the kind of rotation in the game
+     * @return the color chosen
+     */
     public COLOR getColorAi(boolean clockWise){
         double[] choice =new double[4];
 
@@ -512,6 +511,11 @@ public class PcPlayer extends Player{
         return color;
     }
 
+    /**
+     * get the number of repetition of each color in probability
+     * @param color the color
+     * @return the probability in double
+     */
     private double getAiColorRepetition(COLOR color){
         double num = 0;
         double total = (double) playersCarts.size();

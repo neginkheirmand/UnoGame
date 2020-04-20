@@ -1,39 +1,60 @@
 package ir.ac.aut;
 
-import sun.plugin2.gluegen.runtime.CPU;
-
 import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Player {
+    //the name of the player
     protected final String namePlayer;
-    protected int playersPoint;
-    //when adding a new cart YOU SHOULD CHECK IF HASNT ALREADY BEEN ADDED
+
+    //the array list of the cards of the player
     protected ArrayList<Cart> playersCarts;
 
+    /**
+     * the constructor of the class
+     * @param name the name of the player
+     * @param playersCarts the array list of players cards
+     */
     public Player(String name, ArrayList<Cart> playersCarts){
         this.namePlayer=name;
         //we are sure that the Array List given to this player is an array of 5 valid carts
         this.playersCarts=playersCarts;
     }
 
+    /**
+     * method to add new card
+     * @param newCart
+     */
     public void addCart(Cart newCart){
         playersCarts.add(newCart);
         return;
     }
 
+    /**
+     * getter method (size of the arraylist of cards)
+     * @return size of the arraylist of cards
+     */
     public int getNumberCartsLeft(){
         return playersCarts.size();
     }
 
+    /**
+     * getter method (point of the player)
+     * @return the sum of the point of each card in players hand
+     */
     public int getPlayersPoint(){
-        playersPoint=0;
+        int playersPoint=0;
         for(int i=0; i<playersCarts.size(); i++){
             playersPoint+=playersCarts.get(i).getPoint();
         }
         return playersPoint;
     }
 
+    /**
+     * method to be called when is this players turn to play
+     * @param lastCartPlayed the last card played
+     * @return this players Card to be played
+     */
     public Cart playCart(Cart lastCartPlayed){
         int chosenCart=chose(lastCartPlayed);
         if(chosenCart==-1){
@@ -46,6 +67,10 @@ public class Player {
         }
     }
 
+    /**
+     * method to be called when is this players turn to play a Draw +2 card
+     * @return the choosen Draw+2 card
+     */
     public Cart playDraw2Cart(){
         //this method is a defense method for the player to defend itself against a draw+2 cart
         //and its called only if we are sure that there actually exists a draw+2 cart in his hand, but anyway
@@ -64,6 +89,10 @@ public class Player {
         return temp;
     }
 
+    /**
+     * method to be called when is this players turn to play a wild draw card
+     * @return the choosen wild Draw card
+     */
     public Cart playWildDrawCart(){
         //this method is a defense method for the player to defend itself against a draw+4 cart
         //and its called only if we are sure that there actually exists a WildDraw+4 cart in his hand, but anyway
@@ -80,6 +109,11 @@ public class Player {
         return temp;
     }
 
+    /**
+     * get method for wild draw cards in players hands by its number
+     * @param number number of the wild Draw card in players hands
+     * @return the card with the specified number
+     */
     private Cart getWildDrawCartByNum(int number){
         for(int i=0, num=0; i<playersCarts.size(); i++){
             if(playersCarts.get(i) instanceof WildDrawCart){
@@ -92,6 +126,11 @@ public class Player {
         return  null;
     }
 
+    /**
+     * get method for draw cards in players hands by its number
+     * @param number number of the Draw card in players hands
+     * @return the card with the specified number
+     */
     private Cart getDraw2CartByNum(int number){
         for(int i=0, num=0; i<playersCarts.size(); i++){
             if(playersCarts.get(i) instanceof Draw2Cart){
@@ -104,6 +143,10 @@ public class Player {
         return  null;
     }
 
+    /**
+     * a method for the player to choose a wild draw card
+     * @return the index of the chosen wild draw card
+     */
     private int chooseWildDrawCart(){
         //we are sure that this player has Wild Draw +4 carts in his/her hand
         int numberOfWildDrawCarts = numWildDrawCarts();
@@ -129,6 +172,10 @@ public class Player {
 
     }
 
+    /**
+     * a method for the player to choose a draw card
+     * @return the index of the chosen draw card
+     */
     private int chooseDraw2Cart() {
         //we are sure that this player has Draw +2 carts in his/her hand
         int numberOfDraw2Carts = numDraw2Carts();

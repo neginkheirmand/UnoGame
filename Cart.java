@@ -4,15 +4,29 @@ public class Cart implements Action{
     protected int point ;
     protected COLOR color;
 
+    /**
+     * the constructor of this class
+     * @param pointCart the points of the card created
+     * @param colorOfCart the color of the card(if its a wild or a wild draw card has the color as null)
+     */
     public Cart(int pointCart, COLOR colorOfCart){
         point=pointCart;
         color = colorOfCart;
     }
 
+    /**
+     * the getter method for the color
+     * @return the Color of the card
+     */
     public COLOR getColor(){
         return color;
     }
 
+    /**
+     * a method to see if this card can be played by looking at the last card played
+     * @param lastCartPlayed the card in the center of the board
+     * @return boolean specifier if can be played
+     */
     public boolean canPlayCart(Cart lastCartPlayed){
         if(lastCartPlayed.getColor().equals(this.color)){
             return true;
@@ -20,11 +34,18 @@ public class Cart implements Action{
         return false;
     }
 
+    /**
+     * a getter method to get the points of the card
+     * @return the points of the card
+     */
     public int getPoint(){
         return point;
     }
 
-//this method works perfectly
+    /**
+     * a method to print each line of a card in the consule
+     * @param line the line
+     */
     public void printLineOfCart(int line){
         if(line==-1){
             System.out.printf("           ");
@@ -146,6 +167,9 @@ public class Cart implements Action{
         return;
     }
 
+    /**
+     * a method for printing the card
+     */
     public void printCart(){
         for(int i=0; i<7; i++){
             printLineOfCart(i);

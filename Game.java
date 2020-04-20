@@ -7,12 +7,21 @@ import java.util.Scanner;
 
 public class Game {
     //the last Card added (las index Card) in this Array List is the last one added
+    //this array list contains the carts
     private ArrayList<Cart> carts;
+    //this array list contains the players in turn
     private ArrayList<Player> players;
 
+    //this COLOR fields contains the color of the board after using a wild cart
     private static COLOR baseColor;
+    //this field is the kind of rotation in the board between players
     private boolean clockWise;
 
+    /**
+     * the constructor of the class
+     * @param numPlayers the number of human players
+     * @param numPcPlayers the number of bots
+     */
     public Game(int numPlayers, int numPcPlayers){
 
         carts = new ArrayList<>();
@@ -98,26 +107,45 @@ public class Game {
 
     }
 
+    /**
+     * a method to get the name of the players from consule
+     * @param number the number of the player in the arraylist(index+1)
+     * @return the String taken from the consule
+     */
     private String inputNamePlayer(int number){
         System.out.println("Please enter yout name Player "+number);
         String namePlayer = (new Scanner(System.in)).next();
         return namePlayer;
     }
 
+    /**
+     * a method to shuffle the cards in the start of the game
+     */
     private void shuffle(){
         Collections.shuffle(carts);
         return;
     }
 
+    /**
+     * a method to return the static field of this class (the baseColor field)
+     * @return the color
+     */
     public static COLOR getBaseColor(){
         return baseColor;
     }
 
+    /**
+     * a method to change the rotation of the game
+     */
     private void reverseRotation(){
         clockWise=!clockWise;
         return;
     }
 
+    /**
+     * a method to get the last card in the card array list
+     * @return
+     */
     private Cart getLastCart() {
         if (carts.size() != 0) {
             return carts.get(carts.size() - 1);
@@ -129,6 +157,13 @@ public class Game {
         }
     }
 
+    /**
+     * a method to update in information about player with indexPlayer in the players array list and give that new information to the neighbor bots
+     * @param indexPlayer the index of player in the players array list
+     * @param lastCart the last cart that this player wasn't able to answer to correctly(not responding or with a wild card)
+     * @param lastPlayed a boolean that specifies if the last player played a card
+     * @param hasWild a boolean that specifies if the pplayer has a wild card in his hand
+     */
     private void updateInfoPcPlayer(int indexPlayer, Cart lastCart, boolean lastPlayed, boolean hasWild){
         if(players.get(  (indexPlayer+1)%players.size()) instanceof PcPlayer){
             ((PcPlayer) players.get(  (indexPlayer+1)%players.size())).updateInfoRight(lastCart, lastPlayed, hasWild);
@@ -139,7 +174,10 @@ public class Game {
         return;
     }
 
-    //we only call this method when the number of cards of the player is increased
+    /**
+     * a method to delete all the info cause the player has new cards
+     * @param indexPlayer the index of the player with new cards
+     */
     private void updateInfoAIAfterAddCart(int indexPlayer){
         if(players.get(  (indexPlayer+1)%players.size()) instanceof PcPlayer){
             ((PcPlayer) players.get(  (indexPlayer+1)%players.size())).addedCardToRightPlayer();
@@ -225,17 +263,29 @@ public class Game {
         }
     }
 
+    /**
+     * a method to take the color from player
+     */
     private void miniWildCartRun(){
         baseColor = getColorFromPlayer();
         return;
     }
 
+    /**
+     * a method to get the color
+     * @param indexPcPlayer
+     */
     private void wildCardRunAI(int indexPcPlayer){
         baseColor = ((PcPlayer)players.get(indexPcPlayer)).getColorAi(clockWise);
         System.out.println("the chosen color by The player "+ players.get(indexPcPlayer).getNamePlayer()+" is "+COLOR.getColor(baseColor)+baseColor.name()+"\033[0m");
         return;
     }
 
+    /**
+     * a method to continue the game after a player played a wild draw+4 card
+     * @param indexPlayer
+     * @return the number of rounds advanced in the game
+     */
     private int miniRunWildDrawCart(int indexPlayer){
         //so that the color in the center is updated
         int advanced=1;
@@ -324,6 +374,10 @@ public class Game {
 
     }
 
+    /**
+     * a method for the player to enter the color
+     * @return
+     */
     private COLOR getColorFromPlayer(){
 
         String c =  COLOR.getBackGroundColor(COLOR.RED);
@@ -373,6 +427,9 @@ public class Game {
         return COLOR.getColorByIndex(choice);
     }
 
+    /**
+     * the main run method of the game
+     */
     private void run(){
 //        printEndGame();
         int indexPlayerInTurn = (new Random()).nextInt(players.size());
@@ -530,6 +587,11 @@ public class Game {
         }
     }
 
+    /**
+     * a method to get the number of the cards of the next player in the game
+     * @param indexPlayer
+     * @return the number of the cards
+     */
     private int getNumberCardsNextPlayer(int indexPlayer){
         if(clockWise){
             indexPlayer++;
@@ -543,6 +605,9 @@ public class Game {
         return players.get(indexPlayer).getNumberCartsLeft();
     }
 
+    /**
+     * method for printing the information of the game when the game ends
+     */
     private void printEndGame(){
 
         printAllPlayersCarts();
@@ -627,6 +692,11 @@ public class Game {
 
     }
 
+    /**
+     * a method to return the number of the digits of a number
+     * @param a the number
+     * @return its digits
+     */
     private int digit(int a){
         int digitNum=1;
         while(a/10!=0){
@@ -636,6 +706,9 @@ public class Game {
         return digitNum;
     }
 
+    /**
+     * a method for printing the board and its infotmation
+     */
     private void printBoard(){
         String rotationUniCode;
         if(clockWise==true){
@@ -698,18 +771,19 @@ public class Game {
             for(int i=0; i<players.get(0).getNamePlayer().length(); i++){
                 System.out.printf(" ");
             }
-            System.out.printf("//");
-            for(int i=0; i<(players.get(1).getNamePlayer().length()+players.get(3).getNamePlayer().length())/2; i++){
-                System.out.printf(" ");
-            }
-            System.out.println("\\\\");
-            System.out.printf(players.get(0).getNamePlayer());
             int max;
             if(players.get(1).getNamePlayer().length()<players.get(3).getNamePlayer().length()){
                 max = players.get(3).getNamePlayer().length();
             }else{
                 max = players.get(1).getNamePlayer().length();
             }
+            System.out.printf("//");
+            for(int i=0; i<max+221
+                    ; i++){
+                System.out.printf(" ");
+            }
+            System.out.println("\\\\");
+            System.out.printf(players.get(0).getNamePlayer());
             for(int i=0; i<max+3; i++){
                 if(i-2==max/2){
                     System.out.printf(rotationUniCode);
@@ -726,7 +800,7 @@ public class Game {
                 System.out.printf("...");
 
             }
-            for(int i=0; i<(players.get(1).getNamePlayer().length()+players.get(3).getNamePlayer().length())/2; i++){
+            for(int i=0; i<max+2; i++){
                 System.out.printf(" ");
             }
             System.out.println("//");
@@ -739,7 +813,9 @@ public class Game {
         }
     }
 
-    //badan bayad in method ro update koni be tori ke be tartib neshun bede emtiad haro
+    /**
+     * a method to print the information of the players
+     */
     private void printPlayersInfo(){
         int maxName = 8;
         for(int i=0; i<players.size(); i++){
@@ -755,7 +831,7 @@ public class Game {
         }
         System.out.println(COLOR.getColor(COLOR.RED)+"|"+COLOR.getColor(COLOR.BLUE)+"  points:  "+COLOR.getColor(COLOR.RED)+"| "+COLOR.getColor(COLOR.BLUE)+" Number Of Carts:"+COLOR.getColor(COLOR.RED));
         for(int i=0; i<maxName+28; i++){
-            if(i==8||i==19){
+            if(i==maxName||i==maxName+11){
                 System.out.printf("+");
             }
             System.out.printf("-");
@@ -775,7 +851,7 @@ public class Game {
         }
         System.out.printf(COLOR.getColor(COLOR.RED));
         for(int i=0; i<maxName+28; i++){
-            if(i==8||i==19){
+            if(i==maxName||i==maxName+11){
                 System.out.printf("+");
             }
             System.out.printf("-");
@@ -784,12 +860,18 @@ public class Game {
         return;
     }
 
+    /**
+     * a method to print the information of this round
+     */
     private void printRoundInfo(){
         printBoard();
         printPlayersInfo();
         return;
     }
 
+    /**
+     * a method to print all the players cards when the game is over
+     */
     private void printAllPlayersCarts(){
         for(int i=0; i<players.size(); i++){
             System.out.println("Player number "+(i+1)+"s carts:");
