@@ -1,7 +1,7 @@
 # Uno
 implementation of the Uno game  
 
-![](https://github.com/neginkheirmand/UnoGame/blob/master/examples/UNO-logo1.png?raw=true)
+![](https://github.com/neginkheirmand/UnoGame/blob/master/project%20description%20and%20examples/UNO-logo1.png?raw=true)
 
 
 #### Features
